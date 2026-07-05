@@ -76,8 +76,26 @@ This file tracks what is already implemented, what remains for the next engineer
   - fan memory loading/filtering/deletion
   - RAG indexing/search
   - evaluation scoring
+- Added v2 prompt-quality upgrades:
+  - strategy selection for lore, safety, planning, and general chat turns
+  - prompt technique tags
+  - output contracts
+  - quality checks
+  - untrusted retrieved-content boundary
+  - injection-risk metadata for retrieved chunks
+  - frontend prompt strategy trace panel
+- Added v2 research-backed artifacts:
+  - `prompts/prompt_patterns.md`
+  - `prompts/prompt_inventory.md`
+  - `evals/prompt_regression_set.jsonl`
+  - `evals/judge_rubrics.md`
+  - `evals/prompt_leaderboard.md`
+  - `docs/rag_policy.md`
+  - `docs/tool_policy.md`
+  - `docs/security_tests.md`
+  - `docs/prompt_changelog.md`
 - Verified:
-  - backend tests pass: `9 passed`
+  - backend tests pass: `14 passed`
   - Python compile check passes
   - frontend JavaScript syntax check passes
   - live FastAPI endpoints respond
@@ -96,6 +114,10 @@ This file tracks what is already implemented, what remains for the next engineer
 - Add frontend support for manual eval review submission.
 - Add backend tests for API routers, not only services.
 - Add integration tests for SSE chat streaming.
+- Turn `evals/prompt_regression_set.jsonl` into an executable regression runner.
+- Add pairwise prompt A/B judge workflow with randomized answer order.
+- Add prompt leaderboard updates from automated eval runs.
+- Add richer strategy selection using intent classification instead of keyword heuristics.
 - Add error-state UI for failed backend requests, empty RAG search results, and invalid form input.
 - Add loading states for dashboard, RAG search, and chat send.
 - Add auth or at least demo access controls before deployment.
@@ -142,6 +164,8 @@ This file tracks what is already implemented, what remains for the next engineer
   - low-latency fan chat
   - structured eval JSON
   - high-quality persona preservation
+- Whether to use DSPy-style optimization directly or keep the lightweight v2 prompt-quality service.
+- Best design for pairwise LLM-as-judge evaluation while controlling position and verbosity bias.
 - Current OpenAI streaming and token usage APIs for accurate cost logging.
 - Best embedding approach for the MVP:
   - OpenAI embeddings
@@ -177,4 +201,3 @@ This file tracks what is already implemented, what remains for the next engineer
   - which demo scenarios to show
   - which architecture diagram to include
   - how to explain memory/RAG/eval separation in interviews
-

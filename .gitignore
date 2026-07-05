@@ -1,8 +1,8 @@
 backend/.venv/
+venv/
 backend/.env
 backend/blue_garage.db
 backend/chroma_db/
 .pytest_cache/
 __pycache__/
 *.pyc
-

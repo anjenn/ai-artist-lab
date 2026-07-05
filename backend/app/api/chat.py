@@ -24,6 +24,7 @@ from app.services.memory_service import (
     summarize_if_needed,
 )
 from app.services.prompt_builder import build_artist_chat_prompt
+from app.services.prompt_quality import annotate_rag_chunks, select_prompt_strategy, strategy_to_debug
 from app.services.rag_service import RagService
 from app.services.safety_service import build_safety_context, detect_boundary_risk, load_artist_rules
 
@@ -49,9 +50,11 @@ async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db))
     recent_messages = load_recent_messages(db, payload.conversation_id, limit=10)
     fan_memories = load_fan_memories(db, payload.fan_id, payload.artist_id, limit=8)
     conversation_summary = load_conversation_summary(db, payload.conversation_id)
-    rag_chunks = RagService().search(payload.message, artist_id=payload.artist_id, top_k=4)
+    rag_chunks = annotate_rag_chunks(RagService().search(payload.message, artist_id=payload.artist_id, top_k=4))
     boundary_risk = detect_boundary_risk(payload.message)
     safety_context = build_safety_context(artist_rules, boundary_risk)
+    prompt_strategy = select_prompt_strategy(payload.message, boundary_risk, rag_chunks)
+    prompt_strategy_debug = strategy_to_debug(prompt_strategy, rag_chunks)
     prompt_version = db.scalar(select(PromptVersion).order_by(PromptVersion.created_at.desc()).limit(1))
     messages, prompt_debug = build_artist_chat_prompt(
         artist=artist,
@@ -63,6 +66,7 @@ async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db))
         user_message=payload.message,
         prompt_version=prompt_version,
         safety_context=safety_context,
+        prompt_strategy=prompt_strategy_debug,
     )
 
     async def event_stream() -> AsyncIterator[str]:
@@ -115,6 +119,7 @@ async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db))
             "used_rag": rag_chunks,
             "latency_ms": latency_ms,
             "prompt_version": prompt_debug["prompt_version"],
+            "prompt_strategy": prompt_debug["prompt_strategy"],
             "evaluation": evaluation,
             "boundary_risk": boundary_risk,
         }
@@ -122,4 +127,3 @@ async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db))
         yield _sse({"type": "done"})
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
-

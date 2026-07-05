@@ -13,6 +13,8 @@ The demo centers on a fictional AI artist named **LUMI NOA**. The important engi
 - Server-Sent Events chat streaming at `POST /chat/stream`
 - Deterministic local LLM mock when `OPENAI_API_KEY` is not set
 - Heuristic response evaluator for persona, context, memory, RAG, safety, boundary, warmth, hallucination risk, and overall quality
+- V2 prompt-quality layer with named strategies, technique tags, output contracts, quality checks, and untrusted-content boundaries
+- Prompt-injection detection metadata for retrieved knowledge chunks
 - Single-file `index.html` frontend upgraded from mockup to live API client with mock fallback
 - Pytest coverage for prompt building, memory filtering, RAG retrieval, and evaluation
 
@@ -130,6 +132,8 @@ curl -N -X POST http://127.0.0.1:8000/chat/stream \
 
 Expected behavior: token events stream first, then a debug event containing used memory, used RAG chunks, latency, prompt version, evaluation scores, and boundary-risk metadata.
 
+In v2, the debug event also includes `prompt_strategy`, which names the selected technique stack such as `rag-grounded-direct-answer`, `safety-filtered-response`, or `candidate-comparison`.
+
 ## Tests
 
 ```bash
@@ -182,6 +186,7 @@ Fan browser
        -> Fan-memory loader
        -> Conversation-summary loader
        -> RAG retriever
+       -> Prompt-quality strategy selector
        -> Safety service
        -> Prompt builder
        -> LLM client
@@ -223,9 +228,22 @@ backend/
       eval_service.py
       safety_service.py
       llm_client.py
+      prompt_quality.py
   tests/
   requirements.txt
   .env.example
+docs/
+  rag_policy.md
+  tool_policy.md
+  security_tests.md
+  prompt_changelog.md
+prompts/
+  prompt_patterns.md
+  prompt_inventory.md
+evals/
+  prompt_regression_set.jsonl
+  judge_rubrics.md
+  prompt_leaderboard.md
 knowledge_base/
   artist_profile.md
   debut_story.md
@@ -237,7 +255,7 @@ knowledge_base/
 ## Known Limitations
 
 - Memory extraction is not automatic yet; the MVP seeds and exposes memories, then loads them for chat.
-- The evaluator is deterministic and heuristic. It is ready to be swapped or augmented with LLM-as-judge.
+- The evaluator and strategy selector are deterministic and heuristic. They are ready to be swapped or augmented with LLM-as-judge and larger eval sets.
 - The frontend remains a single HTML file on purpose for demo simplicity.
 - ChromaDB is used when available, with a local fallback for reliable offline runs.
 - No authentication or multi-user tenancy is implemented.
@@ -249,3 +267,4 @@ knowledge_base/
 - Add real embedding provider support behind the RAG service abstraction.
 - Add migration tooling such as Alembic.
 - Add a production frontend once the MVP interaction model is stable.
+- Expand `evals/prompt_regression_set.jsonl` into a larger prompt leaderboard workflow.

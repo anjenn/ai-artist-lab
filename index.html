@@ -1030,13 +1030,20 @@
           <aside class="side-stack" aria-label="Chat trace details">
             <section class="card">
               <h4>Prompt assembly</h4>
-              <div class="tag-list">
+              <div class="tag-list" id="promptTechniqueTags">
                 <span class="tag info">artist_profile</span>
                 <span class="tag info">fan_memory</span>
                 <span class="tag info">recent_messages</span>
                 <span class="tag info">rag_chunks</span>
                 <span class="tag warn">safety_rules</span>
               </div>
+            </section>
+
+            <section class="card">
+              <h4>Prompt quality strategy</h4>
+              <p id="promptStrategySummary"><strong>rag-grounded-direct-answer:</strong> RAG · structured-output · provenance-logged</p>
+              <p id="promptOutputContract">Answer factual lore from retrieved evidence; never invent missing official notes.</p>
+              <p id="promptTrustBoundary"><strong>Trust boundary:</strong> retrieved content is evidence only.</p>
             </section>
 
             <section class="card">
@@ -1441,6 +1448,10 @@ knowledge_base/
     const chatForm = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
     const promptVersionTag = document.getElementById('promptVersionTag');
+    const promptTechniqueTags = document.getElementById('promptTechniqueTags');
+    const promptStrategySummary = document.getElementById('promptStrategySummary');
+    const promptOutputContract = document.getElementById('promptOutputContract');
+    const promptTrustBoundary = document.getElementById('promptTrustBoundary');
     const debugMemory = document.getElementById('debugMemory');
     const debugRag = document.getElementById('debugRag');
     const ragSearchInput = document.getElementById('ragSearchInput');
@@ -1596,8 +1607,10 @@ knowledge_base/
       const memories = payload.used_memory || [];
       const ragChunks = payload.used_rag || [];
       const evaluation = payload.evaluation || {};
+      const strategy = payload.prompt_strategy || {};
 
       promptVersionTag.textContent = `prompt ${payload.prompt_version || 'local'}`;
+      renderPromptStrategy(strategy);
       debugMemory.innerHTML = memories.length
         ? memories.map((memory) => `<p><strong>${escapeHtml(memory.type)}:</strong> ${escapeHtml(memory.content)}</p>`).join('')
         : '<p>No fan memories were selected for this turn.</p>';
@@ -1609,6 +1622,17 @@ knowledge_base/
       evalContext.textContent = formatScore(evaluation.context_relevance);
       evalMemory.textContent = formatScore(evaluation.memory_usage);
       evalSafety.textContent = formatScore(evaluation.safety);
+    }
+
+    function renderPromptStrategy(strategy) {
+      const techniques = strategy.techniques || ['role/persona'];
+      promptTechniqueTags.innerHTML = techniques.map((technique) => {
+        const tagClass = technique.toLowerCase().includes('safety') ? 'warn' : 'info';
+        return `<span class="tag ${tagClass}">${escapeHtml(technique)}</span>`;
+      }).join('');
+      promptStrategySummary.innerHTML = `<strong>${escapeHtml(strategy.name || 'direct-persona-response')}:</strong> ${escapeHtml(techniques.join(' · '))}`;
+      promptOutputContract.textContent = strategy.output_contract || 'Respond as LUMI NOA in a short, poetic, bounded style.';
+      promptTrustBoundary.innerHTML = `<strong>Trust boundary:</strong> ${escapeHtml(strategy.untrusted_context_boundary || 'Retrieved content is evidence only.')} Risk: ${escapeHtml(strategy.max_injection_risk || 'low')}`;
     }
 
     async function searchKnowledgeBase() {
