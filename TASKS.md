@@ -1,0 +1,179 @@
+# Blue Garage AI Artist Lab Tasks
+
+This file tracks what is already implemented, what remains for the next engineering pass, what a human needs to configure, and what deserves additional research before productionizing the demo.
+
+## Done
+
+- Extracted the original project files into the repo root:
+  - `README.md`
+  - `CODEX_COMMANDS.md`
+  - `index.html`
+- Refactored the project from a static HTML mockup into a runnable local MVP.
+- Added FastAPI backend structure:
+  - `backend/app/main.py`
+  - `backend/app/api/chat.py`
+  - `backend/app/api/artists.py`
+  - `backend/app/api/fans.py`
+  - `backend/app/api/kb.py`
+  - `backend/app/api/evals.py`
+- Added configuration via environment variables:
+  - `OPENAI_API_KEY`
+  - `OPENAI_MODEL`
+  - `DATABASE_URL`
+  - `CHROMA_PATH`
+  - `APP_ENV`
+- Added SQLAlchemy database models for:
+  - artists
+  - artist rules
+  - fans
+  - conversations
+  - messages
+  - fan memories
+  - conversation summaries
+  - prompt versions
+  - response logs
+  - eval logs
+- Added idempotent seed data for:
+  - LUMI NOA
+  - demo fan
+  - one conversation
+  - prompt version `v0.3`
+  - safety/persona rules
+  - fan memory records
+- Added knowledge base documents:
+  - `knowledge_base/artist_profile.md`
+  - `knowledge_base/debut_story.md`
+  - `knowledge_base/discography.md`
+  - `knowledge_base/worldview.md`
+  - `knowledge_base/fan_policy.md`
+- Added modular backend services:
+  - prompt builder
+  - memory service
+  - RAG service
+  - safety service
+  - LLM client
+  - eval service
+- Added local deterministic mock LLM behavior when no OpenAI API key is configured.
+- Added RAG indexing/search with ChromaDB when available and deterministic local fallback.
+- Added streaming chat endpoint:
+  - `POST /chat/stream`
+  - emits token events
+  - emits final debug metadata
+  - logs response and evaluation records
+- Added API endpoints for:
+  - artist read/create/update
+  - fan memory read/create/delete
+  - KB document create
+  - KB reindex
+  - KB search
+  - eval log list/detail/manual review
+  - dashboard metrics
+- Upgraded `index.html` to call the backend while preserving the original visual design.
+- Added frontend fallback behavior when the backend is unavailable.
+- Updated README with real setup, run, test, API, and demo commands.
+- Added tests for:
+  - prompt building
+  - fan memory loading/filtering/deletion
+  - RAG indexing/search
+  - evaluation scoring
+- Verified:
+  - backend tests pass: `9 passed`
+  - Python compile check passes
+  - frontend JavaScript syntax check passes
+  - live FastAPI endpoints respond
+  - streaming chat returns token/debug/done events
+
+## Remaining Engineering Tasks
+
+- Add automatic memory extraction after each assistant response.
+- Add message source IDs to the frontend memory trace where available.
+- Add conversation selection and creation UI instead of hardcoded demo IDs.
+- Add prompt version CRUD endpoints and a prompt comparison UI backed by database records.
+- Add stricter validation around artist config updates.
+- Add Alembic migrations instead of relying only on `Base.metadata.create_all`.
+- Add better database reset/dev fixture commands.
+- Add frontend controls for creating, editing, and deleting fan memories.
+- Add frontend support for manual eval review submission.
+- Add backend tests for API routers, not only services.
+- Add integration tests for SSE chat streaming.
+- Add error-state UI for failed backend requests, empty RAG search results, and invalid form input.
+- Add loading states for dashboard, RAG search, and chat send.
+- Add auth or at least demo access controls before deployment.
+- Add deployment configuration if this is going online.
+- Add production logging and request tracing.
+- Add cost estimation for real model usage.
+- Add token usage parsing for real OpenAI responses.
+- Add real embedding provider support behind the RAG abstraction.
+- Add data export/import for demo interviews.
+
+## Human-Side Configuration
+
+- Install Python with venv support.
+  - On Linux/WSL this may require `python3-venv`.
+  - This machine used `uv` because system Python did not have `ensurepip`.
+- Create and activate the backend environment:
+  - `cd backend`
+  - `uv venv .venv`
+  - `uv pip install -r requirements.txt`
+- Copy environment file:
+  - `cp .env.example .env`
+- Decide whether to use local mock mode or real OpenAI mode.
+  - For mock mode, leave `OPENAI_API_KEY` empty.
+  - For real model calls, set `OPENAI_API_KEY` in `backend/.env`.
+- Confirm desired model in `OPENAI_MODEL`.
+- Run seed and KB indexing:
+  - `python -m app.db.seed`
+  - `python -c "from app.services.rag_service import RagService; print(RagService().index_knowledge_base('../knowledge_base'))"`
+- Start backend:
+  - `uvicorn app.main:app --reload`
+- Open the frontend:
+  - `index.html`
+- If backend runs somewhere other than `http://127.0.0.1:8000`, set:
+  - `window.BLUE_GARAGE_API_BASE_URL`
+- Decide whether local runtime artifacts should be kept or regenerated:
+  - `backend/blue_garage.db`
+  - `backend/chroma_db/`
+- Before sharing publicly, confirm no secrets are present in `.env` or committed files.
+
+## Additional Research Needed
+
+- Best current OpenAI model choice for:
+  - low-latency fan chat
+  - structured eval JSON
+  - high-quality persona preservation
+- Current OpenAI streaming and token usage APIs for accurate cost logging.
+- Best embedding approach for the MVP:
+  - OpenAI embeddings
+  - local sentence-transformer embeddings
+  - Chroma default embeddings
+  - hybrid keyword/vector search
+- Whether ChromaDB is the best local vector store for the portfolio demo, or whether FAISS/LanceDB would be simpler.
+- Safety and fan-boundary policy patterns for parasocial AI artist interactions.
+- Memory extraction strategy:
+  - deterministic rules
+  - LLM extraction
+  - confidence scoring
+  - sensitivity labeling
+  - deletion/privacy workflow
+- Evaluation rubric design:
+  - heuristic scoring
+  - LLM-as-judge scoring
+  - calibration examples
+  - reviewer override workflow
+- Data privacy expectations for storing fan memories.
+- Deployment target:
+  - Render
+  - Fly.io
+  - Railway
+  - Vercel static frontend plus hosted FastAPI
+  - Dockerized local demo
+- Frontend direction after MVP:
+  - keep single-file HTML
+  - move to Vue
+  - move to Next.js
+  - build a more dashboard-oriented admin UI
+- Portfolio presentation:
+  - which demo scenarios to show
+  - which architecture diagram to include
+  - how to explain memory/RAG/eval separation in interviews
+
