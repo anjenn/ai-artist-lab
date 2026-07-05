@@ -34,3 +34,13 @@ def test_korean_debut_query_returns_discography_or_debut_story(tmp_path):
     sources = {result["source"] for result in results}
 
     assert {"discography.md", "debut_story.md"} & sources
+
+
+def test_korean_prompt_quality_research_query_prefers_v2_note(tmp_path):
+    kb = Path(__file__).resolve().parents[2] / "knowledge_base"
+    rag = RagService(chroma_path=str(tmp_path / "chroma"), use_chroma=False)
+    rag.index_knowledge_base(str(kb))
+
+    results = rag.search("프롬프트 보안 평가 리서치", top_k=2)
+
+    assert results[0]["source"] == "prompt_quality_research_v2.md"

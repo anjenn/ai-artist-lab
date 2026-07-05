@@ -33,6 +33,24 @@ def _tokens(text: str) -> list[str]:
         tokens.extend(["support", "counselling", "steady"])
     if "리서치" in lowered or "연구" in lowered:
         tokens.extend(["research", "evidence"])
+    if "프롬프트" in lowered:
+        tokens.extend(["prompt", "strategy"])
+    if "평가" in lowered or "루브릭" in lowered:
+        tokens.extend(["eval", "evaluation", "rubric"])
+    if "보안" in lowered or "인젝션" in lowered or "주입" in lowered:
+        tokens.extend(["security", "injection", "boundary"])
+    if "메모리" in lowered:
+        tokens.extend(["memory"])
+    if "개인정보" in lowered or "프라이버시" in lowered:
+        tokens.extend(["privacy"])
+    if "삭제" in lowered:
+        tokens.extend(["deletion", "delete"])
+    if "경계" in lowered:
+        tokens.extend(["boundary", "safety"])
+    if "의존" in lowered:
+        tokens.extend(["dependency"])
+    if "검색" in lowered:
+        tokens.extend(["search", "retrieval"])
     return tokens
 
 
@@ -95,10 +113,40 @@ class LocalKnowledgeStore:
                 bonus += 2.0
             if "exam" in query_tokens and "fan_policy" in metadata["source"]:
                 bonus += 0.5
-            if "persona" in query_tokens and "persona_research" in metadata["source"]:
+            source = metadata["source"]
+            if "persona" in query_tokens and "persona_research" in source:
                 bonus += 1.5
-            if "research" in query_tokens and "persona_research" in metadata["source"]:
+            if "research" in query_tokens and "persona_research" in source and {
+                "persona",
+                "disc",
+                "manner",
+                "mode",
+            } & query_tokens:
                 bonus += 1.0
+            if {
+                "prompt",
+                "strategy",
+                "eval",
+                "evaluation",
+                "rubric",
+                "security",
+                "injection",
+            } & query_tokens and "prompt_quality_research" in source:
+                bonus += 1.5
+            if {
+                "memory",
+                "privacy",
+                "deletion",
+                "delete",
+                "embedding",
+                "hybrid",
+                "cost",
+                "streaming",
+                "boundary",
+                "safety",
+                "dependency",
+            } & query_tokens and ("technical_research" in source or "fan_policy" in source):
+                bonus += 1.5
             score = (overlap / max(len(query_tokens), 1)) + bonus
             scored.append((score, doc))
         scored.sort(key=lambda item: item[0], reverse=True)

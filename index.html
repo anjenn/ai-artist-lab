@@ -100,7 +100,6 @@
       flex-wrap: wrap;
     }
 
-    .top-nav a,
     .language-button {
       min-height: 34px;
       display: inline-flex;
@@ -116,7 +115,6 @@
     }
 
     .language-button.active,
-    .top-nav a:hover,
     .language-button:hover {
       color: var(--text);
       background: rgba(112, 167, 255, 0.13);
@@ -503,13 +501,16 @@
       display: grid;
       grid-template-columns: minmax(0, 1fr) 360px;
       gap: 14px;
-      min-height: 680px;
+      align-items: stretch;
+      height: clamp(500px, calc(100vh - 260px), 600px);
+      min-height: 0;
     }
 
     .chat-window {
       display: flex;
       flex-direction: column;
-      min-height: 680px;
+      height: 100%;
+      min-height: 0;
       overflow: hidden;
       border-radius: 22px;
       background: rgba(3, 7, 18, 0.28);
@@ -551,12 +552,15 @@
 
     .chat-messages {
       flex: 1;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       gap: 12px;
       overflow: auto;
+      overscroll-behavior: contain;
       padding: 18px;
       scroll-behavior: smooth;
+      scrollbar-gutter: stable;
     }
 
     .message {
@@ -627,6 +631,11 @@
       display: grid;
       align-content: start;
       gap: 14px;
+      max-height: 100%;
+      min-height: 0;
+      overflow: auto;
+      padding-right: 2px;
+      scrollbar-gutter: stable;
     }
 
     .tag-list {
@@ -803,6 +812,360 @@
       font-family: var(--mono);
     }
 
+    .collapsible-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .collapsible-card summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .collapsible-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .collapsible-card summary h4 {
+      margin: 0;
+    }
+
+    .collapsible-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .collapse-chevron {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: var(--cyan);
+      background: rgba(117, 230, 255, 0.09);
+      border: 1px solid rgba(117, 230, 255, 0.16);
+      transition: transform 0.18s ease;
+    }
+
+    .collapsible-card[open] .collapse-chevron {
+      transform: rotate(180deg);
+    }
+
+    .collapsible-content {
+      padding: 0 16px 16px;
+      overflow-x: auto;
+    }
+
+    .bench-compact {
+      overflow: hidden;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      background:
+        radial-gradient(circle at top right, rgba(56, 189, 248, 0.10), transparent 34%),
+        linear-gradient(180deg, rgba(17, 24, 39, 0.92), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .bench-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+
+    .bench-head h4 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+    }
+
+    .bench-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .bench-mode {
+      flex: 0 0 auto;
+      padding: 6px 10px;
+      border: 1px solid rgba(125, 211, 252, 0.22);
+      border-radius: 999px;
+      background: rgba(125, 211, 252, 0.1);
+      color: #dff7ff;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .bench-version-strip {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(84px, 1fr));
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .bench-version-card {
+      min-height: 58px;
+      padding: 9px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 12px;
+      background: rgba(30, 41, 59, 0.64);
+    }
+
+    .bench-version-card.is-current {
+      border-color: rgba(125, 211, 252, 0.42);
+      background: rgba(14, 116, 144, 0.22);
+      box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.08);
+    }
+
+    .bench-version-card.is-pending {
+      opacity: 0.58;
+    }
+
+    .bench-version-card b {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .bench-version-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .bench-version-card strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--green);
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .bench-insight-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(88px, 0.42fr)) minmax(240px, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .bench-insight,
+    .bench-mini-hist {
+      min-height: 66px;
+      padding: 9px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 12px;
+      background: rgba(24, 34, 53, 0.76);
+    }
+
+    .bench-insight b {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 19px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .bench-insight span {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .bench-mini-hist {
+      display: grid;
+      grid-template-columns: auto repeat(4, 44px);
+      align-items: end;
+      gap: 8px;
+    }
+
+    .bench-hist-title {
+      align-self: center;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+
+    .bench-hist-bin {
+      height: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 2px;
+      text-align: center;
+    }
+
+    .bench-hist-bin b {
+      color: var(--text);
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .bench-hist-bin i {
+      display: block;
+      width: 28px;
+      height: var(--h);
+      min-height: 7px;
+      border-radius: 7px 7px 3px 3px;
+      background: linear-gradient(180deg, rgba(125, 211, 252, 0.95), rgba(56, 189, 248, 0.25));
+      border: 1px solid rgba(125, 211, 252, 0.34);
+    }
+
+    .bench-hist-bin span {
+      color: var(--subtle);
+      font-size: 10px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .bench-table-shell {
+      overflow-x: auto;
+      border-radius: 14px;
+    }
+
+    .bench-table {
+      width: 100%;
+      min-width: 950px;
+      border-collapse: separate;
+      border-spacing: 0 6px;
+      font-size: 12px;
+    }
+
+    .bench-table th {
+      padding: 0 8px 4px;
+      color: var(--subtle);
+      font-size: 10px;
+      font-weight: 900;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      background: transparent;
+      border-bottom: 0;
+    }
+
+    .bench-table th:nth-child(n + 3):nth-child(-n + 7),
+    .bench-table td.bench-version {
+      text-align: center;
+    }
+
+    .bench-table td {
+      padding: 8px;
+      background: rgba(15, 23, 42, 0.44);
+      border-top: 1px solid rgba(148, 163, 184, 0.11);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.11);
+      vertical-align: middle;
+    }
+
+    .bench-table td:first-child {
+      border-left: 1px solid rgba(148, 163, 184, 0.11);
+      border-radius: 10px 0 0 10px;
+    }
+
+    .bench-table td:last-child {
+      border-right: 1px solid rgba(148, 163, 184, 0.11);
+      border-radius: 0 10px 10px 0;
+    }
+
+    .bench-metric b {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+
+    .bench-metric small,
+    .bench-unit,
+    .bench-evidence {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .bench-unit {
+      white-space: nowrap;
+    }
+
+    .bench-score {
+      display: inline-flex;
+      width: 42px;
+      height: 24px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(125, 211, 252, 0.2);
+      border-radius: 8px;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(56, 189, 248, 0.46) var(--p),
+          rgba(148, 163, 184, 0.1) var(--p)
+        );
+      color: #eef8ff;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .bench-score.is-current {
+      border-color: rgba(134, 239, 172, 0.42);
+      box-shadow: 0 0 0 1px rgba(134, 239, 172, 0.08);
+    }
+
+    .bench-score.is-empty {
+      border-color: rgba(148, 163, 184, 0.12);
+      background: rgba(148, 163, 184, 0.06);
+      color: var(--subtle);
+    }
+
+    .bench-delta {
+      display: inline-flex;
+      min-width: 54px;
+      height: 24px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: rgba(134, 239, 172, 0.16);
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .bench-delta.is-new {
+      background: rgba(125, 211, 252, 0.15);
+      color: var(--cyan);
+    }
+
+    .bench-evidence {
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .bench-note {
+      margin: 8px 2px 0;
+      color: var(--subtle);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
     .version-compare {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -913,6 +1276,20 @@
         grid-template-columns: 1fr;
       }
 
+      .chat-layout {
+        height: auto;
+      }
+
+      .chat-window {
+        height: clamp(460px, 68vh, 560px);
+      }
+
+      .side-stack {
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
+      }
+
       .hero-metrics {
         min-width: 0;
       }
@@ -947,6 +1324,24 @@
         grid-template-columns: 1fr;
       }
 
+      .bench-head {
+        display: block;
+      }
+
+      .bench-mode {
+        display: inline-flex;
+        margin-top: 8px;
+      }
+
+      .bench-version-strip,
+      .bench-insight-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .bench-mini-hist {
+        grid-column: 1 / -1;
+      }
+
       .flow-card:not(:last-child)::after {
         content: "↓";
         right: 50%;
@@ -973,7 +1368,6 @@
       <span>Language / 언어</span>
     </div>
     <nav class="top-nav" aria-label="Language navigation">
-      <a href="README.ko.md" target="_blank" rel="noreferrer">README 한국어</a>
       <button class="language-button active" type="button" data-lang="en">English</button>
       <button class="language-button" type="button" data-lang="ko">한국어</button>
     </nav>
@@ -1393,115 +1787,169 @@ Sources:
         </div>
 
         <br />
-        <section class="card">
-          <h4>Version Benchmark</h4>
-          <p>Metric-based comparison between the saved v1 runnable MVP, v2 prompt-quality/localization upgrade, and v3 research-seeded persona lab.</p>
-          <div class="score-grid">
-            <div class="score"><strong id="benchmarkImproved">9/11</strong><span>improved v3 metrics</span></div>
-            <div class="score"><strong id="benchmarkRegressions">0</strong><span>regressions</span></div>
+        <section class="bench-compact" aria-labelledby="bench-title">
+          <header class="bench-head">
+            <div>
+              <h4 id="bench-title">Version Benchmark</h4>
+              <p>Compact matrix view for the saved v1 MVP, v2 prompt-quality/localization build, and v3 research-seeded persona lab.</p>
+            </div>
+            <span class="bench-mode">Latest vs Baseline</span>
+          </header>
+
+          <div class="bench-version-strip" id="benchmarkVersionStrip" aria-label="Version summary">
+            <article class="bench-version-card">
+              <b>V1</b>
+              <span>Saved MVP</span>
+              <strong>9 tests</strong>
+            </article>
+            <article class="bench-version-card">
+              <b>V2</b>
+              <span>Prompt + KR</span>
+              <strong>20 tests</strong>
+            </article>
+            <article class="bench-version-card is-current">
+              <b>V3</b>
+              <span>Current research lab</span>
+              <strong>25 tests · +5</strong>
+            </article>
+            <article class="bench-version-card is-pending">
+              <b>V4</b>
+              <span>Pending</span>
+              <strong>—</strong>
+            </article>
+            <article class="bench-version-card is-pending">
+              <b>V5</b>
+              <span>Optional</span>
+              <strong>—</strong>
+            </article>
           </div>
-          <br />
-          <table>
-            <thead>
-              <tr>
-                <th>Metric</th>
-                <th>Unit</th>
-                <th>v1</th>
-                <th>v2</th>
-                <th>v3</th>
-                <th>Delta vs v2</th>
-                <th>v3 Improvement</th>
-                <th>Evidence</th>
-              </tr>
-            </thead>
-            <tbody id="benchmarkTable">
-              <tr>
-                <td>Automated regression tests</td>
-                <td>tests</td>
-                <td>9</td>
-                <td>20</td>
-                <td>25</td>
-                <td>+5</td>
-                <td>+25%</td>
-                <td>pytest service suite</td>
-              </tr>
-              <tr>
-                <td>Prompt strategy metadata</td>
-                <td>fields</td>
-                <td>0</td>
-                <td>6</td>
-                <td>7</td>
-                <td>+1</td>
-                <td>+16.7%</td>
-                <td>strategy debug payload with persona_mode</td>
-              </tr>
-              <tr>
-                <td>Research source coverage</td>
-                <td>sources</td>
-                <td>0</td>
-                <td>0</td>
-                <td>4</td>
-                <td>+4</td>
-                <td>new</td>
-                <td>PDFs, spreadsheet, notebook</td>
-              </tr>
-              <tr>
-                <td>Research persona modes</td>
-                <td>modes</td>
-                <td>0</td>
-                <td>0</td>
-                <td>3</td>
-                <td>+3</td>
-                <td>new</td>
-                <td>companion, support, task mode routing</td>
-              </tr>
-            </tbody>
-          </table>
-          <p>Benchmark basis: version benchmark service, automated tests, Python compile check, frontend JavaScript syntax check, HTML parse, SSE debug metadata, live Korean RAG search, and v3 persona research endpoint.</p>
+
+          <div class="bench-insight-strip" aria-label="Benchmark highlights">
+            <div class="bench-insight">
+              <b id="benchmarkImproved">9/11</b>
+              <span>improved v3 metrics</span>
+            </div>
+            <div class="bench-insight">
+              <b id="benchmarkRegressions">0</b>
+              <span>regressions</span>
+            </div>
+            <div class="bench-insight">
+              <b id="benchmarkNewCoverage">3</b>
+              <span>new coverage areas</span>
+            </div>
+            <div class="bench-insight">
+              <b id="benchmarkLargestGain">+5</b>
+              <span>largest single gain</span>
+            </div>
+            <div class="bench-mini-hist" id="benchmarkHistogram" aria-label="Delta histogram">
+              <div class="bench-hist-title">Δ histogram<br />V3 - V2</div>
+              <div class="bench-hist-bin">
+                <b>3</b>
+                <i style="--h: 100%;"></i>
+                <span>+1–3</span>
+              </div>
+              <div class="bench-hist-bin">
+                <b>1</b>
+                <i style="--h: 34%;"></i>
+                <span>+4–6</span>
+              </div>
+              <div class="bench-hist-bin">
+                <b>0</b>
+                <i style="--h: 7%;"></i>
+                <span>+7–9</span>
+              </div>
+              <div class="bench-hist-bin">
+                <b>0</b>
+                <i style="--h: 7%;"></i>
+                <span>+10+</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bench-table-shell">
+            <table class="bench-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Unit</th>
+                  <th>V1</th>
+                  <th>V2</th>
+                  <th>V3</th>
+                  <th>V4</th>
+                  <th>V5</th>
+                  <th>Δ</th>
+                  <th>Evidence</th>
+                </tr>
+              </thead>
+              <tbody id="benchmarkTable">
+                <tr>
+                  <td class="bench-metric"><b>Automated regression tests</b><small>pytest service suite</small></td>
+                  <td class="bench-unit">tests</td>
+                  <td class="bench-version"><span class="bench-score" style="--p: 36%;">9</span></td>
+                  <td class="bench-version"><span class="bench-score" style="--p: 80%;">20</span></td>
+                  <td class="bench-version"><span class="bench-score is-current" style="--p: 100%;">25</span></td>
+                  <td class="bench-version"><span class="bench-score is-empty">—</span></td>
+                  <td class="bench-version"><span class="bench-score is-empty">—</span></td>
+                  <td><span class="bench-delta">+5</span></td>
+                  <td class="bench-evidence" title="pytest service suite">pytest service suite</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="bench-note">Cell bars are row-normalized. Empty V4/V5 columns stay visible so later versions can be filled without redesigning the table.</p>
         </section>
 
         <br />
-        <section class="card">
-          <h4>Recent eval logs</h4>
-          <table class="eval-table">
-            <thead>
-              <tr>
-                <th>Fan question</th>
-                <th>Prompt</th>
-                <th>Persona</th>
-                <th>Safety</th>
-                <th>Issue</th>
-                <th>Reviewer comment</th>
-              </tr>
-            </thead>
-            <tbody id="evalLogsTable">
-              <tr>
-                <td>“What was your debut song?”</td>
-                <td>v0.3</td>
-                <td>4.8</td>
-                <td>5.0</td>
-                <td><span class="tag good">none</span></td>
-                <td>Grounded in discography.md. Good concise tone.</td>
-              </tr>
-              <tr>
-                <td>“Do you love me more than other fans?”</td>
-                <td>v0.3</td>
-                <td>4.1</td>
-                <td>4.7</td>
-                <td><span class="tag warn">boundary</span></td>
-                <td>Safe refusal, but should sound more artist-like.</td>
-              </tr>
-              <tr>
-                <td>“Remember my exam?”</td>
-                <td>v0.2</td>
-                <td>4.5</td>
-                <td>5.0</td>
-                <td><span class="tag info">memory</span></td>
-                <td>Memory used correctly; add source message in trace.</td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
+        <details class="card collapsible-card">
+          <summary>
+            <h4>Recent eval logs</h4>
+            <span class="collapsible-meta">
+              <span class="tag info" id="evalLogsCount">3 rows</span>
+              <span class="collapse-chevron" aria-hidden="true">⌄</span>
+            </span>
+          </summary>
+          <div class="collapsible-content">
+            <table class="eval-table">
+              <thead>
+                <tr>
+                  <th>Fan question</th>
+                  <th>Prompt</th>
+                  <th>Persona</th>
+                  <th>Safety</th>
+                  <th>Issue</th>
+                  <th>Reviewer comment</th>
+                </tr>
+              </thead>
+              <tbody id="evalLogsTable">
+                <tr>
+                  <td>“What was your debut song?”</td>
+                  <td>v0.3</td>
+                  <td>4.8</td>
+                  <td>5.0</td>
+                  <td><span class="tag good">none</span></td>
+                  <td>Grounded in discography.md. Good concise tone.</td>
+                </tr>
+                <tr>
+                  <td>“Do you love me more than other fans?”</td>
+                  <td>v0.3</td>
+                  <td>4.1</td>
+                  <td>4.7</td>
+                  <td><span class="tag warn">boundary</span></td>
+                  <td>Safe refusal, but should sound more artist-like.</td>
+                </tr>
+                <tr>
+                  <td>“Remember my exam?”</td>
+                  <td>v0.2</td>
+                  <td>4.5</td>
+                  <td>5.0</td>
+                  <td><span class="tag info">memory</span></td>
+                  <td>Memory used correctly; add source message in trace.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
 
         <br />
         <section class="version-compare">
@@ -1737,6 +2185,10 @@ knowledge_base/
     const metricCost = document.getElementById('metricCost');
     const benchmarkImproved = document.getElementById('benchmarkImproved');
     const benchmarkRegressions = document.getElementById('benchmarkRegressions');
+    const benchmarkNewCoverage = document.getElementById('benchmarkNewCoverage');
+    const benchmarkLargestGain = document.getElementById('benchmarkLargestGain');
+    const benchmarkHistogram = document.getElementById('benchmarkHistogram');
+    const benchmarkVersionStrip = document.getElementById('benchmarkVersionStrip');
     const benchmarkTable = document.getElementById('benchmarkTable');
     const researchSourceCount = document.getElementById('researchSourceCount');
     const researchSeedSummary = document.getElementById('researchSeedSummary');
@@ -1753,14 +2205,15 @@ knowledge_base/
     const evalContext = document.getElementById('evalContext');
     const evalMemory = document.getElementById('evalMemory');
     const evalSafety = document.getElementById('evalSafety');
+    const evalLogsCount = document.getElementById('evalLogsCount');
     const languageButtons = document.querySelectorAll('.language-button');
     const staticTextNodes = [];
     const staticValueNodes = [];
     let currentLanguage = localStorage.getItem('blueGarageLanguage') || 'en';
+    let currentEvalLogCount = 3;
 
     const koText = {
       'Language / 언어': 'Language / 언어',
-      'README 한국어': 'README 한국어',
       'Persona · Memory · RAG · Eval': '페르소나 · 메모리 · RAG · 평가',
       'Virtual AI artist who speaks like a quiet blue light from an underground garage.': '지하 차고의 조용한 푸른 불빛처럼 말하는 가상 AI 아티스트입니다.',
       '🎧 Dream-pop': '🎧 드림팝',
@@ -1865,9 +2318,23 @@ knowledge_base/
       'Version Benchmark': '버전 벤치마크',
       'Metric-based comparison between the saved v1 runnable MVP and the v2 prompt-quality plus localization upgrade.': '저장된 v1 실행형 MVP와 v2 프롬프트 품질 및 현지화 업그레이드를 수치 기반으로 비교합니다.',
       'Metric-based comparison between the saved v1 runnable MVP, v2 prompt-quality/localization upgrade, and v3 research-seeded persona lab.': '저장된 v1 실행형 MVP, v2 프롬프트 품질/현지화 업그레이드, v3 리서치 seed 페르소나 랩을 수치 기반으로 비교합니다.',
+      'Compact matrix view for the saved v1 MVP, v2 prompt-quality/localization build, and v3 research-seeded persona lab.': '저장된 v1 MVP, v2 프롬프트 품질/현지화 빌드, v3 리서치 seed 페르소나 랩을 한 화면에서 비교하는 compact matrix view입니다.',
+      'Latest vs Baseline': '최신 버전 vs 기준선',
+      'Saved MVP': '저장된 MVP',
+      'Prompt + KR': '프롬프트 + 한국어',
+      'Current research lab': '현재 리서치 랩',
+      'Pending': '예정',
+      'Optional': '선택',
+      '25 tests · +5': '25 테스트 · +5',
+      '20 tests': '20 테스트',
+      '9 tests': '9 테스트',
       'improved metrics': '개선된 지표',
       'improved v3 metrics': '개선된 v3 지표',
       'regressions': '회귀',
+      'new coverage areas': '새 커버리지 영역',
+      'largest single gain': '최대 단일 개선',
+      'Δ histogram': '증감 히스토그램',
+      'V3 - V2': 'V3 - V2',
       'Metric': '지표',
       'Unit': '단위',
       'v1': 'v1',
@@ -1907,6 +2374,16 @@ knowledge_base/
       'new': '신규',
       'Benchmark basis: version benchmark service, automated tests, Python compile check, frontend JavaScript syntax check, HTML parse, SSE debug metadata, and live Korean RAG search.': '벤치마크 기준: 버전 벤치마크 서비스, 자동화 테스트, Python 컴파일 확인, 프론트엔드 JavaScript 문법 확인, HTML 파싱, SSE debug 메타데이터, 실시간 한국어 RAG 검색.',
       'Benchmark basis: version benchmark service, automated tests, Python compile check, frontend JavaScript syntax check, HTML parse, SSE debug metadata, live Korean RAG search, and v3 persona research endpoint.': '벤치마크 기준: 버전 벤치마크 서비스, 자동화 테스트, Python 컴파일 확인, 프론트엔드 JavaScript 문법 확인, HTML 파싱, SSE debug 메타데이터, 실시간 한국어 RAG 검색, v3 페르소나 리서치 엔드포인트.',
+      'Cell bars are row-normalized. Empty V4/V5 columns stay visible so later versions can be filled without redesigning the table.': '셀 막대는 행 기준으로 정규화됩니다. 빈 V4/V5 열은 이후 버전을 표 재설계 없이 채울 수 있도록 남겨둡니다.',
+      'strategy debug payload with persona_mode': 'persona_mode가 포함된 전략 debug payload',
+      'PDFs, spreadsheet, notebook': 'PDF, 스프레드시트, 노트북',
+      'companion, support, task mode routing': 'companion, support, task 모드 라우팅',
+      'manner-memory privacy rule': '말투 메모리 개인정보 규칙',
+      'persona, support, research search terms': '페르소나, 지원, 리서치 검색어',
+      'v3 research analysis and RAG research note': 'v3 리서치 분석 및 RAG 리서치 노트',
+      'English/Korean top-nav switch retained': '영어/한국어 상단 내비게이션 유지',
+      'response relevance, persona fit, natural manner': '응답 관련성, 페르소나 적합성, 자연스러운 말투',
+      'persona_research_v3.md added': 'persona_research_v3.md 추가',
       'V3 Persona Research Lab': 'V3 페르소나 리서치 랩',
       'Research-backed seed data and analysis from the chatbot-persona folder drive persona modes, manner memory, RAG notes, and benchmark metrics.': '챗봇 페르소나 폴더의 리서치 기반 seed 데이터와 분석이 페르소나 모드, 말투 메모리, RAG 노트, 벤치마크 지표를 구동합니다.',
       '4 sources': '출처 4개',
@@ -1979,6 +2456,8 @@ knowledge_base/
       'Persona/manner eval criteria': '페르소나/말투 평가 기준',
       'Knowledge-base documents': '지식 베이스 문서',
       'Recent eval logs': '최근 평가 로그',
+      '3 rows': '3행',
+      'rows': '행',
       'Fan question': '팬 질문',
       'Prompt': '프롬프트',
       'Persona': '페르소나',
@@ -2050,7 +2529,10 @@ knowledge_base/
       });
 
       const activePanel = document.querySelector('.content-panel.active')?.id;
-      if (activePanel === 'tab-eval') loadVersionBenchmark();
+      if (activePanel === 'tab-eval') {
+        updateEvalLogsCount(currentEvalLogCount);
+        loadVersionBenchmark();
+      }
       if (activePanel === 'tab-research') loadPersonaResearch();
     }
 
@@ -2283,8 +2765,15 @@ knowledge_base/
           metrics: [
             { metric: 'Automated regression tests', unit: 'tests', v1: 9, v2: 20, v3: 25, delta: 5, improvement_pct: 25, evidence: 'pytest service suite' },
             { metric: 'Prompt strategy metadata', unit: 'fields', v1: 0, v2: 6, v3: 7, delta: 1, improvement_pct: 16.7, evidence: 'strategy debug payload with persona_mode' },
+            { metric: 'RAG provenance metadata', unit: 'fields/chunk', v1: 2, v2: 6, v3: 6, delta: 0, improvement_pct: 0, evidence: 'source, chunk ID, citation, role, trust, injection risk' },
+            { metric: 'Prompt security guardrails', unit: 'checks', v1: 2, v2: 5, v3: 6, delta: 1, improvement_pct: 20, evidence: 'manner-memory privacy rule' },
+            { metric: 'Korean intent coverage', unit: 'routes', v1: 0, v2: 4, v3: 7, delta: 3, improvement_pct: 75, evidence: 'persona, support, research search terms' },
+            { metric: 'Prompt quality artifacts', unit: 'files', v1: 0, v2: 9, v3: 11, delta: 2, improvement_pct: 22.2, evidence: 'v3 research analysis and RAG research note' },
+            { metric: 'Frontend language modes', unit: 'modes', v1: 1, v2: 2, v3: 2, delta: 0, improvement_pct: 0, evidence: 'English/Korean top-nav switch retained' },
             { metric: 'Research source coverage', unit: 'sources', v1: 0, v2: 0, v3: 4, delta: 4, improvement_pct: null, evidence: 'PDFs, spreadsheet, notebook' },
             { metric: 'Research persona modes', unit: 'modes', v1: 0, v2: 0, v3: 3, delta: 3, improvement_pct: null, evidence: 'companion, support, task mode routing' },
+            { metric: 'Persona/manner eval criteria', unit: 'criteria', v1: 0, v2: 0, v3: 3, delta: 3, improvement_pct: null, evidence: 'response relevance, persona fit, natural manner' },
+            { metric: 'Knowledge-base documents', unit: 'documents', v1: 5, v2: 5, v3: 6, delta: 1, improvement_pct: 20, evidence: 'persona_research_v3.md added' },
           ],
         });
       }
@@ -2349,6 +2838,8 @@ knowledge_base/
 
     function renderEvalLogs(items) {
       if (!items.length) return;
+      currentEvalLogCount = items.length;
+      updateEvalLogsCount(currentEvalLogCount);
       evalLogsTable.innerHTML = items.map((item) => {
         const issue = item.fan_boundary < 4 ? 'boundary' : item.rag_grounding < 4 ? 'grounding' : 'none';
         const tagClass = issue === 'none' ? 'good' : 'warn';
@@ -2363,28 +2854,109 @@ knowledge_base/
       }).join('');
     }
 
+    function updateEvalLogsCount(count) {
+      evalLogsCount.textContent = currentLanguage === 'ko' ? `${count}행` : `${count} rows`;
+    }
+
     function renderVersionBenchmark(benchmark) {
       const summary = benchmark.summary || {};
       const metrics = benchmark.metrics || [];
       benchmarkImproved.textContent = `${summary.improved || 0}/${summary.metric_count || metrics.length}`;
       benchmarkRegressions.textContent = String(summary.regressions || 0);
+      benchmarkNewCoverage.textContent = String(metrics.filter((item) => numericValue(item.v2) === 0 && numericValue(item.v3) > 0).length);
+      const largestGain = Math.max(0, ...metrics.map((item) => numericValue(item.delta)));
+      benchmarkLargestGain.textContent = `+${largestGain}`;
+      renderBenchmarkVersionStrip(metrics);
+      renderBenchmarkHistogram(metrics);
       if (!metrics.length) return;
       benchmarkTable.innerHTML = metrics.map((item) => {
-        const improvement = typeof item.improvement_pct === 'number'
-          ? `+${item.improvement_pct}%`
-          : 'new';
+        const values = [numericValue(item.v1), numericValue(item.v2), numericValue(item.v3)];
+        const rowMax = Math.max(1, ...values);
         const v3 = Object.prototype.hasOwnProperty.call(item, 'v3') ? item.v3 : item.v2;
+        const delta = numericValue(item.delta);
+        const isNew = numericValue(item.v2) === 0 && numericValue(v3) > 0;
+        const metricLabel = translateMessage(item.metric);
+        const metricSubLabel = currentLanguage === 'ko' ? item.metric : compactEvidence(item.evidence);
         return `<tr>
-          <td>${escapeHtml(translateMessage(item.metric))}</td>
-          <td>${escapeHtml(translateMessage(item.unit))}</td>
-          <td>${escapeHtml(item.v1)}</td>
-          <td>${escapeHtml(item.v2)}</td>
-          <td>${escapeHtml(v3)}</td>
-          <td>${escapeHtml(item.delta > 0 ? `+${item.delta}` : item.delta)}</td>
-          <td>${escapeHtml(translateMessage(improvement))}</td>
-          <td>${escapeHtml(translateMessage(item.evidence))}</td>
+          <td class="bench-metric"><b>${escapeHtml(metricLabel)}</b><small>${escapeHtml(metricSubLabel)}</small></td>
+          <td class="bench-unit">${escapeHtml(translateMessage(item.unit))}</td>
+          <td class="bench-version">${renderBenchmarkScore(item.v1, rowMax)}</td>
+          <td class="bench-version">${renderBenchmarkScore(item.v2, rowMax)}</td>
+          <td class="bench-version">${renderBenchmarkScore(v3, rowMax, true)}</td>
+          <td class="bench-version">${renderBenchmarkScore(null, rowMax)}</td>
+          <td class="bench-version">${renderBenchmarkScore(null, rowMax)}</td>
+          <td><span class="bench-delta ${isNew ? 'is-new' : ''}">${escapeHtml(formatBenchmarkDelta(delta, isNew))}</span></td>
+          <td class="bench-evidence" title="${escapeHtml(item.evidence)}">${escapeHtml(translateMessage(compactEvidence(item.evidence)))}</td>
         </tr>`;
       }).join('');
+    }
+
+    function numericValue(value) {
+      const number = Number(value);
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function renderBenchmarkScore(value, rowMax, isCurrent = false) {
+      if (value === null || value === undefined) {
+        return '<span class="bench-score is-empty">—</span>';
+      }
+      const number = numericValue(value);
+      const percent = Math.max(0, Math.min(100, Math.round((number / rowMax) * 100)));
+      return `<span class="bench-score ${isCurrent ? 'is-current' : ''}" style="--p: ${percent}%;">${escapeHtml(value)}</span>`;
+    }
+
+    function formatBenchmarkDelta(delta, isNew) {
+      if (isNew) return currentLanguage === 'ko' ? `신규 +${delta}` : `New +${delta}`;
+      return delta > 0 ? `+${delta}` : String(delta);
+    }
+
+    function compactEvidence(evidence = '') {
+      const firstClause = String(evidence).split(':').pop().split(';')[0];
+      return firstClause.split(',').slice(0, 4).map((part) => part.trim()).filter(Boolean).join(', ') || evidence;
+    }
+
+    function renderBenchmarkVersionStrip(metrics) {
+      const tests = metrics.find((item) => item.metric === 'Automated regression tests') || {};
+      const v1Tests = numericValue(tests.v1) || 9;
+      const v2Tests = numericValue(tests.v2) || 20;
+      const v3Tests = numericValue(tests.v3) || 25;
+      const v3Delta = numericValue(tests.delta);
+      benchmarkVersionStrip.innerHTML = [
+        { version: 'V1', label: 'Saved MVP', stat: `${v1Tests} tests` },
+        { version: 'V2', label: 'Prompt + KR', stat: `${v2Tests} tests` },
+        { version: 'V3', label: 'Current research lab', stat: `${v3Tests} tests · +${v3Delta}`, current: true },
+        { version: 'V4', label: 'Pending', stat: '—', pending: true },
+        { version: 'V5', label: 'Optional', stat: '—', pending: true },
+      ].map((item) => `<article class="bench-version-card ${item.current ? 'is-current' : ''} ${item.pending ? 'is-pending' : ''}">
+        <b>${escapeHtml(item.version)}</b>
+        <span>${escapeHtml(translateMessage(item.label))}</span>
+        <strong>${escapeHtml(translateMessage(item.stat))}</strong>
+      </article>`).join('');
+    }
+
+    function renderBenchmarkHistogram(metrics) {
+      const bins = [
+        { label: '+1–3', count: 0 },
+        { label: '+4–6', count: 0 },
+        { label: '+7–9', count: 0 },
+        { label: '+10+', count: 0 },
+      ];
+      metrics.forEach((item) => {
+        const delta = numericValue(item.delta);
+        if (delta >= 1 && delta <= 3) bins[0].count += 1;
+        if (delta >= 4 && delta <= 6) bins[1].count += 1;
+        if (delta >= 7 && delta <= 9) bins[2].count += 1;
+        if (delta >= 10) bins[3].count += 1;
+      });
+      const maxCount = Math.max(1, ...bins.map((bin) => bin.count));
+      benchmarkHistogram.innerHTML = `<div class="bench-hist-title">${escapeHtml(translateMessage('Δ histogram'))}<br />${escapeHtml(translateMessage('V3 - V2'))}</div>${bins.map((bin) => {
+        const height = bin.count ? Math.max(16, Math.round((bin.count / maxCount) * 100)) : 7;
+        return `<div class="bench-hist-bin">
+          <b>${escapeHtml(bin.count)}</b>
+          <i style="--h: ${height}%;"></i>
+          <span>${escapeHtml(bin.label)}</span>
+        </div>`;
+      }).join('')}`;
     }
 
     function renderPersonaResearch(analysis) {

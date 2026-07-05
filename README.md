@@ -20,6 +20,7 @@ The demo centers on a fictional AI artist named **LUMI NOA**. The important engi
 - V3 research-backed persona lab from `researches/v3_research_2_chatbot_persona`
 - V3 seed data for prompt version `v0.5-research-persona`, purpose-aware DISC modes, and manner-memory guidance
 - `/dashboard/persona-research` endpoint with source coverage, dataset distributions, persona modes, and KIRINO eval metrics
+- Research-backed RAG notes for prompt quality, persona design, technical architecture, fan-boundary safety, memory privacy, and evaluation strategy
 - Single-file `index.html` frontend upgraded from mockup to live API client with mock fallback
 - Pytest coverage for prompt building, memory filtering, RAG retrieval, and evaluation
 
@@ -43,6 +44,8 @@ Metric-based comparison between the saved `v1` runnable MVP, v2 prompt-quality/l
 
 Benchmark basis: `/dashboard/version-benchmark`, `/dashboard/persona-research`, automated tests, Python compile check, frontend JavaScript syntax check, HTML parse, live SSE debug metadata, live Korean RAG search, and research-source analysis.
 
+The benchmark table reflects the saved v3 comparison. The current knowledge base also includes newer research notes from the v2 and v4 research files so RAG can answer implementation-strategy questions beyond the tagged v3 snapshot.
+
 ## V3 Persona Research
 
 V3 uses `researches/v3_research_2_chatbot_persona` to seed and analyze:
@@ -57,6 +60,18 @@ Runtime behavior now selects a research-backed `persona_mode`:
 - `companion-is` for ordinary fan chat.
 - `support-cs` for worry, stress, or counselling-like turns.
 - `task-dc` for lore, planning, benchmark, and analysis questions.
+
+## Latest Research Knowledge Base
+
+The app indexes `knowledge_base/*.md`, so the research notes below are retrievable through `/kb/search` and available to the chat prompt as project knowledge.
+
+| Local research source | Knowledge-base file | Applied guidance |
+|---|---|---|
+| `researches/v2_research1_google_scholar_general.md` | `knowledge_base/prompt_quality_research_v2.md` | Standard prompt sections, named strategies, RAG grounding, evaluation rubrics, prompt-injection boundaries, and prompt changelog discipline |
+| `researches/v3_persona_analysis.md` plus `researches/v3_research_2_chatbot_persona/*` | `knowledge_base/persona_research_v3.md` | Purpose-routed persona modes, persona/manner memory separation, dataset coverage checks, and KIRINO-inspired eval criteria |
+| `researches/v4_overall_technical_researches.md` | `knowledge_base/technical_research_v4.md` and `knowledge_base/fan_policy.md` | Model cascade guidance, streaming usage logging, hybrid retrieval, memory privacy, bounded fandom labels, deletion workflow, and layered evaluation |
+
+OpenAI-specific model names, pricing, retention behavior, and API details in the local v4 research note are treated as time-sensitive recommendations. Re-check official OpenAI docs before production release.
 
 ## Local Setup
 
@@ -239,6 +254,7 @@ Fan browser
 
 ```text
 README.md
+README.ko.md
 CODEX_COMMANDS.md
 index.html
 backend/
@@ -290,6 +306,9 @@ knowledge_base/
   discography.md
   worldview.md
   fan_policy.md
+  prompt_quality_research_v2.md
+  persona_research_v3.md
+  technical_research_v4.md
 ```
 
 ## Known Limitations
@@ -299,12 +318,16 @@ knowledge_base/
 - The frontend remains a single HTML file on purpose for demo simplicity.
 - ChromaDB is used when available, with a local fallback for reliable offline runs.
 - No authentication or multi-user tenancy is implemented.
+- Model availability, pricing, and provider retention details in research notes must be re-verified before production use.
 
 ## Next Improvements
 
-- Add automatic memory extraction after each assistant response.
+- Add automatic memory extraction after each assistant response with deterministic gates and structured extraction.
 - Add prompt-version A/B comparison views backed by database records.
-- Add real embedding provider support behind the RAG service abstraction.
+- Add explicit embedding provider support and hybrid keyword/vector retrieval behind the RAG service abstraction.
+- Add request-level token/cost logging from completed responses plus daily provider reconciliation.
+- Add a Memory Center for view, edit, delete, export, disable-memory controls, and deletion-cascade tests.
+- Expand eval calibration with reviewer overrides for crisis, minors, stalking, impersonation, deleted-memory retrieval, and persona drift.
 - Add migration tooling such as Alembic.
 - Add a production frontend once the MVP interaction model is stable.
 - Expand `evals/prompt_regression_set.jsonl` into a larger prompt leaderboard workflow.
