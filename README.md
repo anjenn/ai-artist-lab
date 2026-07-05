@@ -10,7 +10,7 @@ The demo centers on a fictional AI artist named **LUMI NOA**. The important engi
 
 - FastAPI backend with modular routers and services
 - SQLite database with SQLAlchemy models
-- Idempotent seed data for LUMI NOA, a demo fan, prompt versions through `v0.6-technical-ops`, and fan memories
+- Idempotent seed data for LUMI NOA, a demo fan, prompt versions through `v0.7-real-person-texture`, and fan memories
 - Local RAG over `knowledge_base/*.md` with ChromaDB when available and a deterministic local fallback
 - Server-Sent Events chat streaming at `POST /chat/stream`
 - Deterministic local LLM mock when `OPENAI_API_KEY` is not set
@@ -19,6 +19,7 @@ The demo centers on a fictional AI artist named **LUMI NOA**. The important engi
 - Prompt-injection detection metadata for retrieved knowledge chunks
 - V3 research-backed persona lab from `researches/v3_research_2_chatbot_persona`
 - V3 seed data for purpose-aware DISC modes and manner-memory guidance
+- V3/V4 research-referenced artist persona refresh with concrete public metadata and real-person texture
 - V4 technical-architecture layer from `researches/v4_overall_technical_researches.md`
 - V4 model-route metadata, bounded-fandom safety labels, usage-log schema, memory privacy gates, and layered eval gates
 - `/dashboard/persona-research`, `/dashboard/technical-research`, and `/dashboard/version-benchmark` dashboard endpoints
@@ -33,7 +34,7 @@ Metric-based comparison between the saved `v1` runnable MVP, v2 prompt-quality/l
 
 | Metric | Unit | v1 | v2 | v3 | v4 | Delta vs v3 | v4 Improvement | Evidence |
 |---|---|---:|---:|---:|---:|---:|---:|---|
-| Automated regression tests | tests | 9 | 20 | 25 | 35 | +10 | +40% | pytest service suite |
+| Automated regression tests | tests | 9 | 20 | 25 | 37 | +12 | +48% | pytest service suite |
 | Prompt strategy metadata | fields | 0 | 6 | 7 | 10 | +3 | +42.9% | adds model route, safety labels, usage log IDs |
 | RAG provenance metadata | fields/chunk | 2 | 6 | 6 | 6 | 0 | 0% | source, chunk ID, citation, role, trust, injection risk |
 | Prompt security guardrails | checks | 2 | 5 | 6 | 10 | +4 | +66.7% | adds bounded-fandom and memory-gate checks |

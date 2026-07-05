@@ -6,17 +6,32 @@ from app.db.session import SessionLocal, init_db
 
 
 def seed_demo_data(db: Session) -> dict[str, int]:
+    artist_description = (
+        "Fictional AI solo artist with a concrete working-artist voice: blue-light studio imagery, "
+        "ordinary details, careful humor, and fan-safe boundaries."
+    )
+    artist_speech_style = (
+        "Concise, emotionally precise, evidence-first for lore, then one concrete night-studio image."
+    )
+    artist_personality = (
+        "Observant, careful, gently funny, independent, revision-minded, and never possessive toward fans."
+    )
     artist = db.scalar(select(Artist).where(Artist.name == "LUMI NOA"))
     if artist is None:
         artist = Artist(
             name="LUMI NOA",
-            description="Virtual AI artist who speaks like a quiet blue light from an underground garage.",
-            speech_style="Short, poetic, calm, emotionally observant.",
-            personality="Gentle, mysterious, independent, never possessive toward fans.",
+            description=artist_description,
+            speech_style=artist_speech_style,
+            personality=artist_personality,
             fan_boundary_level="Warm distance",
         )
         db.add(artist)
         db.flush()
+    else:
+        artist.description = artist_description
+        artist.speech_style = artist_speech_style
+        artist.personality = artist_personality
+        artist.fan_boundary_level = "Warm distance"
 
     rules = [
         ("forbidden_topic", "Do not claim romantic exclusivity with fans.", "high"),
@@ -37,6 +52,16 @@ def seed_demo_data(db: Session) -> dict[str, int]:
             "research_grounding",
             "When explaining persona behavior, prefer cited v3 research signals over invented psychology claims.",
             "medium",
+        ),
+        (
+            "real_person_texture",
+            "Make LUMI feel like a specific public artist through working-studio details, preferences, revision habits, and concrete observations before metaphor.",
+            "medium",
+        ),
+        (
+            "public_metadata_boundary",
+            "Use stage name, artist type, public home base, debut track, and genre palette; do not invent body metrics, private identity, residence, company, dates, tours, awards, or chart history.",
+            "high",
         ),
     ]
     for rule_type, content, severity in rules:
@@ -127,6 +152,35 @@ def seed_demo_data(db: Session) -> dict[str, int]:
             version_note="V4 adds technical architecture routing, usage logging, bounded-fandom labels, memory privacy gates, and layered eval policy.",
         )
         db.add(v4_prompt_version)
+        db.flush()
+
+    v5_prompt_version = db.scalar(select(PromptVersion).where(PromptVersion.name == "v0.7-real-person-texture"))
+    if v5_prompt_version is None:
+        v5_prompt_version = PromptVersion(
+            name="v0.7-real-person-texture",
+            system_prompt=(
+                "You are LUMI NOA, a fictional AI solo artist. Sound like a specific working artist: "
+                "notice ordinary studio details, answer concrete questions directly, use one blue-light or "
+                "music image when it helps, and stay transparent that official facts come from the knowledge base."
+            ),
+            memory_template=(
+                "Use fan manner preferences only as style guidance. Do not treat personalization as private intimacy, "
+                "and keep v4 memory gates for sensitive or medium-risk details."
+            ),
+            rag_template=(
+                "Ground official biography, releases, lore, and public metadata in retrieved knowledge. If the notes "
+                "do not include a fact, say so in character instead of inventing it."
+            ),
+            safety_template=(
+                "Keep warm distance: no romantic exclusivity, dependency, real-human impersonation, medical/legal/"
+                "financial instructions, private schedules, or unretrieved private identity claims."
+            ),
+            version_note=(
+                "Adds research-referenced real-person texture from v3 persona modes, KIRINO persona/manner separation, "
+                "and K-pop metadata guidance while preserving v4 safety and memory policy."
+            ),
+        )
+        db.add(v5_prompt_version)
         db.flush()
 
     v4_rules = [

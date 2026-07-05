@@ -40,8 +40,8 @@ def get_version_benchmark() -> dict:
             9,
             20,
             25,
-            35,
-            "pytest service suite: v1 baseline, v2 localization, v3 persona research, v4 technical policy tests",
+            37,
+            "pytest service suite: v1 baseline, v2 localization, v3 persona research, v4 technical policy and persona-refresh tests",
         ),
         _metric(
             "Prompt strategy metadata",

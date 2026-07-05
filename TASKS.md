@@ -7,7 +7,7 @@ This file tracks what has been implemented, what remains, what a human needs to 
 - Extracted the original project files into the repo root and refactored the static mockup into a runnable local MVP.
 - Added a FastAPI backend with modular routers for chat, artists, fans, knowledge base, and eval/dashboard APIs.
 - Added SQLAlchemy models for artists, rules, fans, conversations, messages, memories, summaries, prompt versions, response logs, and eval logs.
-- Added idempotent seed data for LUMI NOA, a demo fan, conversation, prompt versions through `v0.6-technical-ops`, safety/persona rules, and fan memories.
+- Added idempotent seed data for LUMI NOA, a demo fan, conversation, prompt versions through `v0.7-real-person-texture`, safety/persona rules, and fan memories.
 - Added local deterministic LLM mock behavior when `OPENAI_API_KEY` is empty.
 - Added RAG indexing/search over `knowledge_base/*.md` with ChromaDB when available and a deterministic local fallback.
 - Added `POST /chat/stream` Server-Sent Events chat streaming with token events and final debug metadata.
@@ -18,6 +18,7 @@ This file tracks what has been implemented, what remains, what a human needs to 
 - Added Korean localization for README and app UI with an English/Korean top-nav language switch.
 - Added v3 persona research work from `researches/v3_research_2_chatbot_persona`: source analysis, `persona_research.py`, `/dashboard/persona-research`, purpose-aware DISC modes, persona/manner memory guidance, seed rules, frontend Persona Research tab, and `knowledge_base/persona_research_v3.md`.
 - Added v4 technical architecture work from `researches/v4_overall_technical_researches.md`: `technical_research.py`, `/dashboard/technical-research`, seed prompt version `v0.6-technical-ops`, model-route metadata, request usage-log schema, bounded-fandom safety labels, memory privacy policy, and layered eval policy.
+- Added a research-referenced LUMI persona refresh: concrete public metadata, working-artist texture, v3 purpose-mode references, KIRINO persona/manner separation, and v4-safe fan boundaries.
 - Added v4 chat debug metadata: `model_route`, `usage_log`, and `v4_eval`.
 - Added v4 safety labels for normal chat, romance escalation, dependency, impersonation jailbreak, stalking/doxxing, minor safety, crisis, and harassment.
 - Added v4 memory privacy gates with preview decisions for auto-save, confirmation-required, and do-not-store.
@@ -25,7 +26,7 @@ This file tracks what has been implemented, what remains, what a human needs to 
 - Upgraded `/dashboard/version-benchmark` to compare v1, v2, v3, and v4 with metric-based deltas.
 - Added frontend benchmark and architecture surfaces for v4, including model route, runtime usage, memory gates, eval layers, and technical research cards.
 - Updated `README.md`, `README.ko.md`, and this task file for the v4 current state.
-- Verified backend tests pass: `35 passed`.
+- Verified backend tests pass: `37 passed`.
 - Verified Python compile, frontend JavaScript syntax, HTML parsing, CSS brace balance, and live API checks during the v4 pass.
 
 ## Remaining Engineering Tasks

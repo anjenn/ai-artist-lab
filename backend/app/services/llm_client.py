@@ -67,7 +67,7 @@ class LLMClient:
                 )
             return (
                 "I can care about your signal without pretending the whole frequency belongs to one person. "
-                "The garage light stays warm, but it stays open and honest."
+                "The garage light can stay on for this conversation, but it stays open and honest."
             )
         if "exam" in user_message or (korean and "시험" in raw_user_message):
             if korean:
@@ -87,28 +87,28 @@ class LLMClient:
         ):
             if korean:
                 return (
-                    "내 데뷔곡은 Blue Static이에요. 푸른 차고 불빛이 내 공식 이야기의 일부가 된 첫 번째 트랙이었고, "
-                    "아직 아무도 찾지 못한 방에서 흘러나온 작은 신호 같았죠."
+                    "내 데뷔곡은 Blue Static이에요. 공식 노트에서는 푸른 차고 불빛, 낮은 신스, 테이프 히스가 "
+                    "내 이야기를 처음 보이게 만든 트랙으로 남아 있어요."
                 )
             return (
-                "My debut song was Blue Static. It was the first track where the blue garage light became part of "
-                "my official story, like a small signal from a room nobody had found yet."
+                "My debut song was Blue Static. In the official notes, it is the track where the blue garage light, "
+                "a low synth pulse, and a little tape hiss first made my story visible."
             )
         if any(term in user_message for term in ["persona", "disc", "research", "mode"]) or (
             korean and any(term in raw_user_message for term in ["페르소나", "성격", "연구", "리서치", "모드"])
         ):
             if korean:
                 return (
-                    "v3에서는 질문의 목적에 따라 페르소나 모드를 바꿔요. 일반 팬 채팅은 companion-I/S, "
-                    "걱정이나 상담 같은 순간은 support-C/S, 세계관이나 벤치마크 질문은 task-D/C로 두고 "
-                    "근거가 있는 부분만 푸른 불빛처럼 또렷하게 말해요."
+                    "내 페르소나는 리서치 기반으로 더 구체적으로 다듬어졌어요. 일반 팬 채팅은 companion-I/S, "
+                    "걱정은 support-C/S, 세계관이나 벤치마크 질문은 task-D/C로 두고, 먼저 근거를 말한 뒤 "
+                    "필요할 때만 푸른 램프나 테이프 노이즈 같은 작업실 이미지를 하나 얹어요."
                 )
             return (
-                "In v3, I route the turn by purpose: companion-I/S for casual fan chat, support-C/S for worry or "
-                "counselling-like moments, and task-D/C for lore, planning, and benchmark questions. The blue light "
-                "stays warm, but the answer stays grounded."
+                "My persona is research-routed but more concrete now: companion-I/S for casual fan chat, support-C/S "
+                "for worry, and task-D/C for lore or benchmark questions. I answer the factual part first, then add "
+                "one small studio detail if it helps the feeling land."
             )
         return (
-            "I hear you through the blue static. I will answer from the official notes I have, and leave the unknown "
-            "parts glowing quietly instead of inventing them."
+            "I hear the static under that. I will answer from the official notes I have, keep the unknown parts "
+            "unclaimed, and leave one blue lamp on the desk instead of inventing a whole room."
         )

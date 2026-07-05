@@ -29,3 +29,13 @@ class ArtistUpdate(BaseModel):
     speech_style: str | None = None
     personality: str | None = None
     fan_boundary_level: str | None = None
+
+
+class PersonaVersionSave(BaseModel):
+    name: str | None = None
+    artist_name: str
+    fan_boundary_level: str = "Warm distance"
+    speech_style: str
+    personality: str
+    forbidden_statements: str
+    worldview_summary: str

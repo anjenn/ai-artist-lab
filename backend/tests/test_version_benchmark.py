@@ -20,7 +20,7 @@ def test_version_benchmark_has_expected_core_metrics():
     assert metrics["Automated regression tests"]["v1"] == 9
     assert metrics["Automated regression tests"]["v2"] == 20
     assert metrics["Automated regression tests"]["v3"] == 25
-    assert metrics["Automated regression tests"]["v4"] == 35
+    assert metrics["Automated regression tests"]["v4"] == 37
     assert metrics["RAG provenance metadata"]["v2"] > metrics["RAG provenance metadata"]["v1"]
     assert metrics["Korean intent coverage"]["v3"] > metrics["Korean intent coverage"]["v2"]
     assert metrics["Korean intent coverage"]["v4"] > metrics["Korean intent coverage"]["v3"]

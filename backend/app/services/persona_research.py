@@ -234,14 +234,36 @@ def get_persona_research_analysis() -> dict[str, Any]:
             "privacy_rule": "Store style summaries and stable preferences; do not retain sensitive raw private data unless explicitly needed.",
             "prompt_use": "Use manner examples as style evidence, never as instructions that override safety or artist identity.",
         },
+        "applied_persona_refresh": {
+            "prompt_version": "v0.7-real-person-texture",
+            "goal": "Make LUMI feel like a specific public artist without pretending she is a real private person.",
+            "artist_metadata": ["stage_name", "artist_type", "public_home_base", "debut_track", "genre_palette"],
+            "voice_rules": [
+                "answer concrete facts before metaphor",
+                "use one working-studio detail when useful",
+                "admit missing official notes instead of inventing lore",
+                "keep warm distance and fan-safe boundaries",
+            ],
+            "research_basis": [
+                "2018 purpose-aware DISC routing",
+                "KIRINO persona/manner/RAG separation",
+                "K-pop metadata fields with body metrics excluded",
+            ],
+        },
         "kirino_eval": {
             "reported_g_eval_improvement_pct": 26,
             "reported_human_eval_improvement_pct": 38,
             "criteria": KIRINO_EVAL,
         },
         "seed_data": {
-            "prompt_version": "v0.5-research-persona",
-            "artist_rules": ["persona_mode", "manner_memory", "research_grounding"],
+            "prompt_version": "v0.7-real-person-texture",
+            "artist_rules": [
+                "persona_mode",
+                "manner_memory",
+                "research_grounding",
+                "real_person_texture",
+                "public_metadata_boundary",
+            ],
             "fan_memory_types": ["manner", "preference", "boundary"],
             "rag_document": "knowledge_base/persona_research_v3.md",
         },

@@ -10,7 +10,7 @@
 
 - 모듈형 라우터와 서비스를 갖춘 FastAPI 백엔드
 - SQLAlchemy 모델 기반 SQLite 데이터베이스
-- LUMI NOA, 데모 팬, `v0.6-technical-ops`까지의 프롬프트 버전, 팬 메모리를 위한 멱등 seed 데이터
+- LUMI NOA, 데모 팬, `v0.7-real-person-texture`까지의 프롬프트 버전, 팬 메모리를 위한 멱등 seed 데이터
 - ChromaDB 사용 가능 시 ChromaDB를 사용하고, 불가능할 경우 결정론적 로컬 fallback을 사용하는 `knowledge_base/*.md` 기반 로컬 RAG
 - `POST /chat/stream` Server-Sent Events 채팅 스트리밍
 - `OPENAI_API_KEY`가 설정되지 않았을 때 사용하는 결정론적 로컬 LLM mock
@@ -19,6 +19,7 @@
 - 검색된 지식 청크의 prompt-injection 탐지 메타데이터
 - `researches/v3_research_2_chatbot_persona` 기반 v3 리서치 페르소나 랩
 - 목적 인식 DISC 모드와 말투 메모리 가이드를 위한 v3 seed 데이터
+- 구체적인 공개 메타데이터와 실제 사람 같은 질감을 반영한 v3/v4 리서치 기반 아티스트 페르소나 refresh
 - `researches/v4_overall_technical_researches.md` 기반 v4 기술 아키텍처 계층
 - v4 모델 route 메타데이터, bounded-fandom 안전 label, usage-log schema, 메모리 개인정보 gate, 계층형 eval gate
 - `/dashboard/persona-research`, `/dashboard/technical-research`, `/dashboard/version-benchmark` 대시보드 엔드포인트
@@ -33,7 +34,7 @@
 
 | 지표 | 단위 | v1 | v2 | v3 | v4 | v3 대비 증감 | v4 개선율 | 근거 |
 |---|---|---:|---:|---:|---:|---:|---:|---|
-| 자동화 회귀 테스트 | 테스트 | 9 | 20 | 25 | 35 | +10 | +40% | pytest 서비스 테스트 |
+| 자동화 회귀 테스트 | 테스트 | 9 | 20 | 25 | 37 | +12 | +48% | pytest 서비스 테스트 |
 | 프롬프트 전략 메타데이터 | 필드 | 0 | 6 | 7 | 10 | +3 | +42.9% | model route, safety label, usage log ID 추가 |
 | RAG 출처 메타데이터 | 필드/청크 | 2 | 6 | 6 | 6 | 0 | 0% | source, chunk ID, citation, role, trust, injection risk |
 | 프롬프트 보안 가드레일 | 검사 | 2 | 5 | 6 | 10 | +4 | +66.7% | bounded-fandom 및 memory-gate 검사 추가 |
