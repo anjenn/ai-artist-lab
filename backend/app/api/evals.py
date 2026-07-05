@@ -8,6 +8,7 @@ from app.db.models import EvalLog, Message, ResponseLog
 from app.db.session import get_db
 from app.schemas.evals import EvalLogRead, ManualReviewRequest
 from app.services.persona_research import get_persona_research_analysis
+from app.services.technical_research import get_v4_technical_research_analysis
 from app.services.version_benchmark import get_version_benchmark
 
 router = APIRouter(tags=["evaluations"])
@@ -116,3 +117,8 @@ def version_benchmark() -> dict:
 @router.get("/dashboard/persona-research")
 def persona_research() -> dict:
     return get_persona_research_analysis()
+
+
+@router.get("/dashboard/technical-research")
+def technical_research() -> dict:
+    return get_v4_technical_research_analysis()

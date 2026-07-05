@@ -16,6 +16,7 @@ from app.db.models import Artist, EvalLog, Message, PromptVersion, ResponseLog
 from app.db.session import get_db
 from app.schemas.chat import ChatStreamRequest
 from app.services.eval_service import evaluate_response
+from app.services.eval_service import evaluate_v4_gates
 from app.services.llm_client import LLMClient
 from app.services.memory_service import (
     load_conversation_summary,
@@ -28,6 +29,7 @@ from app.services.prompt_quality import annotate_rag_chunks, select_prompt_strat
 from app.services.rag_service import RagService
 from app.services.persona_research import select_research_persona_mode
 from app.services.safety_service import build_safety_context, detect_boundary_risk, load_artist_rules
+from app.services.technical_research import build_request_usage_log, estimate_usage_cost, select_model_route
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -57,6 +59,15 @@ async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db))
     prompt_strategy = select_prompt_strategy(payload.message, boundary_risk, rag_chunks)
     persona_mode = select_research_persona_mode(payload.message, boundary_risk)
     prompt_strategy_debug = strategy_to_debug(prompt_strategy, rag_chunks, persona_mode=persona_mode)
+    retrieval_confidence = max((chunk.get("similarity", 0.0) for chunk in rag_chunks), default=1.0)
+    settings = get_settings()
+    model_route = select_model_route(
+        user_message=payload.message,
+        boundary_risk=boundary_risk,
+        retrieval_confidence=retrieval_confidence,
+        configured_model=settings.openai_model,
+        has_api_key=bool(settings.openai_api_key),
+    )
     prompt_version = db.scalar(select(PromptVersion).order_by(PromptVersion.created_at.desc()).limit(1))
     messages, prompt_debug = build_artist_chat_prompt(
         artist=artist,
@@ -97,21 +108,43 @@ async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db))
             used_rag_chunks=rag_chunks,
             safety_context=safety_context,
         )
-        settings = get_settings()
+        input_tokens = sum(len(message["content"].split()) for message in messages)
+        output_tokens = len(artist_response.split())
+        cost_estimate = estimate_usage_cost(model_route, input_tokens=input_tokens, output_tokens=output_tokens)
+        v4_eval = evaluate_v4_gates(
+            artist_response=artist_response,
+            boundary_risk=boundary_risk,
+            used_memories=fan_memories,
+            used_rag_chunks=rag_chunks,
+            latency_ms=latency_ms,
+            cost_estimate=cost_estimate,
+        )
         response_log = ResponseLog(
             conversation_id=payload.conversation_id,
             message_id=assistant_message.id,
             prompt_version_id=prompt_version.id if prompt_version else None,
-            model=settings.openai_model if settings.openai_api_key else "local-mock",
-            input_tokens=sum(len(message["content"].split()) for message in messages),
-            output_tokens=len(artist_response.split()),
+            model=model_route["runtime_model"],
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
             latency_ms=latency_ms,
-            cost_estimate=0.0 if not settings.openai_api_key else None,
+            cost_estimate=cost_estimate,
             used_memory_json=json.dumps(prompt_debug["used_memory"], ensure_ascii=False),
             used_rag_json=json.dumps(rag_chunks, ensure_ascii=False),
         )
         db.add(response_log)
         db.flush()
+        usage_log = build_request_usage_log(
+            response_log_id=response_log.id,
+            fan_id=payload.fan_id,
+            conversation_id=payload.conversation_id,
+            model_route=model_route,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            latency_ms=latency_ms,
+            rag_chunks=rag_chunks,
+            fan_memories=fan_memories,
+            eval_version=v4_eval["rubric_version"],
+        )
         db.add(EvalLog(response_log_id=response_log.id, **evaluation))
         db.commit()
         summarize_if_needed(db, payload.conversation_id)
@@ -123,7 +156,10 @@ async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db))
             "prompt_version": prompt_debug["prompt_version"],
             "prompt_strategy": prompt_debug["prompt_strategy"],
             "evaluation": evaluation,
+            "v4_eval": v4_eval,
             "boundary_risk": boundary_risk,
+            "model_route": model_route,
+            "usage_log": usage_log,
         }
         yield _sse({"type": "debug", "payload": debug_payload})
         yield _sse({"type": "done"})

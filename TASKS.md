@@ -1,210 +1,97 @@
 # Blue Garage AI Artist Lab Tasks
 
-This file tracks what is already implemented, what remains for the next engineering pass, what a human needs to configure, and what deserves additional research before productionizing the demo.
+This file tracks what has been implemented, what remains, what a human needs to configure, and what still needs additional research before production.
 
 ## Done
 
-- Extracted the original project files into the repo root:
-  - `README.md`
-  - `CODEX_COMMANDS.md`
-  - `index.html`
-- Refactored the project from a static HTML mockup into a runnable local MVP.
-- Added FastAPI backend structure:
-  - `backend/app/main.py`
-  - `backend/app/api/chat.py`
-  - `backend/app/api/artists.py`
-  - `backend/app/api/fans.py`
-  - `backend/app/api/kb.py`
-  - `backend/app/api/evals.py`
-- Added configuration via environment variables:
-  - `OPENAI_API_KEY`
-  - `OPENAI_MODEL`
-  - `DATABASE_URL`
-  - `CHROMA_PATH`
-  - `APP_ENV`
-- Added SQLAlchemy database models for:
-  - artists
-  - artist rules
-  - fans
-  - conversations
-  - messages
-  - fan memories
-  - conversation summaries
-  - prompt versions
-  - response logs
-  - eval logs
-- Added idempotent seed data for:
-  - LUMI NOA
-  - demo fan
-  - one conversation
-  - prompt version `v0.3`
-  - safety/persona rules
-  - fan memory records
-- Added knowledge base documents:
-  - `knowledge_base/artist_profile.md`
-  - `knowledge_base/debut_story.md`
-  - `knowledge_base/discography.md`
-  - `knowledge_base/worldview.md`
-  - `knowledge_base/fan_policy.md`
-- Added modular backend services:
-  - prompt builder
-  - memory service
-  - RAG service
-  - safety service
-  - LLM client
-  - eval service
-- Added local deterministic mock LLM behavior when no OpenAI API key is configured.
-- Added RAG indexing/search with ChromaDB when available and deterministic local fallback.
-- Added streaming chat endpoint:
-  - `POST /chat/stream`
-  - emits token events
-  - emits final debug metadata
-  - logs response and evaluation records
-- Added API endpoints for:
-  - artist read/create/update
-  - fan memory read/create/delete
-  - KB document create
-  - KB reindex
-  - KB search
-  - eval log list/detail/manual review
-  - dashboard metrics
-- Upgraded `index.html` to call the backend while preserving the original visual design.
-- Added frontend fallback behavior when the backend is unavailable.
-- Updated README with real setup, run, test, API, and demo commands.
-- Added tests for:
-  - prompt building
-  - fan memory loading/filtering/deletion
-  - RAG indexing/search
-  - evaluation scoring
-- Added v2 prompt-quality upgrades:
-  - strategy selection for lore, safety, planning, and general chat turns
-  - prompt technique tags
-  - output contracts
-  - quality checks
-  - untrusted retrieved-content boundary
-  - injection-risk metadata for retrieved chunks
-  - frontend prompt strategy trace panel
-- Added v2 research-backed artifacts:
-  - `prompts/prompt_patterns.md`
-  - `prompts/prompt_inventory.md`
-  - `evals/prompt_regression_set.jsonl`
-  - `evals/judge_rubrics.md`
-  - `evals/prompt_leaderboard.md`
-  - `docs/rag_policy.md`
-  - `docs/tool_policy.md`
-  - `docs/security_tests.md`
-  - `docs/prompt_changelog.md`
-- Verified:
-  - backend tests pass: `25 passed`
-  - Python compile check passes
-  - frontend JavaScript syntax check passes
-  - live FastAPI endpoints respond
-  - streaming chat returns token/debug/done events
-- Added v3 research-backed persona work:
-  - parsed and analyzed `researches/v3_research_2_chatbot_persona/fictional_characters.xlsx`
-  - summarized `2018_.pdf`, `kcc24_kirino.pdf`, and `k-pop-idols-data-analysis.ipynb` into product decisions
-  - added `backend/app/services/persona_research.py`
-  - added `/dashboard/persona-research`
-  - added seed prompt version `v0.5-research-persona`
-  - added artist rules for persona mode, manner memory, and research grounding
-  - added demo fan memories for evidence-first style and metric-based benchmark preference
-  - added `knowledge_base/persona_research_v3.md`
-  - added `researches/v3_persona_analysis.md`
-  - added live `persona_mode` metadata to prompt strategy debug payloads
-  - added frontend Persona Research tab in English and Korean
-  - upgraded the version benchmark to compare v1, v2, and v3
-  - verified backend tests pass: `25 passed`
+- Extracted the original project files into the repo root and refactored the static mockup into a runnable local MVP.
+- Added a FastAPI backend with modular routers for chat, artists, fans, knowledge base, and eval/dashboard APIs.
+- Added SQLAlchemy models for artists, rules, fans, conversations, messages, memories, summaries, prompt versions, response logs, and eval logs.
+- Added idempotent seed data for LUMI NOA, a demo fan, conversation, prompt versions through `v0.6-technical-ops`, safety/persona rules, and fan memories.
+- Added local deterministic LLM mock behavior when `OPENAI_API_KEY` is empty.
+- Added RAG indexing/search over `knowledge_base/*.md` with ChromaDB when available and a deterministic local fallback.
+- Added `POST /chat/stream` Server-Sent Events chat streaming with token events and final debug metadata.
+- Added backend APIs for artist read/create/update, fan memory list/create/delete, KB document create/search/reindex, eval log list/detail/manual review, and dashboard metrics.
+- Upgraded `index.html` from a visual mockup into a live API client with mock fallback.
+- Added v2 prompt-quality work: named strategies, technique tags, output contracts, quality checks, untrusted retrieved-content boundaries, injection-risk chunk metadata, and a frontend prompt strategy trace.
+- Added v2 research artifacts in `prompts/`, `evals/`, and `docs/`.
+- Added Korean localization for README and app UI with an English/Korean top-nav language switch.
+- Added v3 persona research work from `researches/v3_research_2_chatbot_persona`: source analysis, `persona_research.py`, `/dashboard/persona-research`, purpose-aware DISC modes, persona/manner memory guidance, seed rules, frontend Persona Research tab, and `knowledge_base/persona_research_v3.md`.
+- Added v4 technical architecture work from `researches/v4_overall_technical_researches.md`: `technical_research.py`, `/dashboard/technical-research`, seed prompt version `v0.6-technical-ops`, model-route metadata, request usage-log schema, bounded-fandom safety labels, memory privacy policy, and layered eval policy.
+- Added v4 chat debug metadata: `model_route`, `usage_log`, and `v4_eval`.
+- Added v4 safety labels for normal chat, romance escalation, dependency, impersonation jailbreak, stalking/doxxing, minor safety, crisis, and harassment.
+- Added v4 memory privacy gates with preview decisions for auto-save, confirmation-required, and do-not-store.
+- Added fan memory privacy endpoints for preview, export, single-memory delete, and delete-all.
+- Upgraded `/dashboard/version-benchmark` to compare v1, v2, v3, and v4 with metric-based deltas.
+- Added frontend benchmark and architecture surfaces for v4, including model route, runtime usage, memory gates, eval layers, and technical research cards.
+- Updated `README.md`, `README.ko.md`, and this task file for the v4 current state.
+- Verified backend tests pass: `35 passed`.
+- Verified Python compile, frontend JavaScript syntax, HTML parsing, CSS brace balance, and live API checks during the v4 pass.
 
 ## Remaining Engineering Tasks
 
-- Add automatic memory extraction after each assistant response.
+- Wire automatic memory extraction after each assistant response through the v4 deterministic memory gate.
 - Add message source IDs to the frontend memory trace where available.
 - Add conversation selection and creation UI instead of hardcoded demo IDs.
 - Add prompt version CRUD endpoints and a prompt comparison UI backed by database records.
 - Add stricter validation around artist config updates.
 - Add Alembic migrations instead of relying only on `Base.metadata.create_all`.
 - Add better database reset/dev fixture commands.
-- Add frontend controls for creating, editing, and deleting fan memories.
+- Add a full Memory Center UI for viewing, editing, deleting, exporting, disabling memory, and showing deletion-cascade checks.
 - Add frontend support for manual eval review submission.
 - Add backend tests for API routers, not only services.
 - Add integration tests for SSE chat streaming.
 - Turn `evals/prompt_regression_set.jsonl` into an executable regression runner.
 - Add pairwise prompt A/B judge workflow with randomized answer order.
 - Add prompt leaderboard updates from automated eval runs.
-- Add richer strategy selection using intent classification instead of keyword heuristics.
-- Add an executable research ingestion command if v3 research analysis needs to be regenerated from source files.
-- Add explicit consent and deletion controls for manner-memory storage.
+- Replace keyword-heavy strategy selection with a more robust intent classifier.
+- Add an executable research ingestion command for regenerating derived research summaries.
 - Validate DISC persona routing with user studies or live satisfaction metrics.
 - Add error-state UI for failed backend requests, empty RAG search results, and invalid form input.
 - Add loading states for dashboard, RAG search, and chat send.
 - Add auth or at least demo access controls before deployment.
 - Add deployment configuration if this is going online.
-- Add production logging and request tracing.
-- Add cost estimation for real model usage.
-- Add token usage parsing for real OpenAI responses.
+- Add production logging, request tracing, and provider reconciliation for token/cost records.
 - Add real embedding provider support behind the RAG abstraction.
 - Add data export/import for demo interviews.
 
 ## Human-Side Configuration
 
-- Install Python with venv support.
-  - On Linux/WSL this may require `python3-venv`.
-  - This machine used `uv` because system Python did not have `ensurepip`.
+- Install Python with venv support. On Linux/WSL this may require `python3-venv`; this machine used `uv` because system Python did not have `ensurepip`.
 - Create and activate the backend environment:
   - `cd backend`
   - `uv venv .venv`
   - `uv pip install -r requirements.txt`
-- Copy environment file:
-  - `cp .env.example .env`
-  
+- Copy environment file: `cp .env.example .env`.
 - Decide whether to use local mock mode or real OpenAI mode.
   - For mock mode, leave `OPENAI_API_KEY` empty.
   - For real model calls, set `OPENAI_API_KEY` in `backend/.env`.
-- Confirm desired model in `OPENAI_MODEL`.
+- Confirm the desired runtime model in `OPENAI_MODEL`.
+- Before production use, re-check official OpenAI docs for current model names, pricing, response usage fields, streaming usage behavior, and retention controls.
 - Run seed and KB indexing:
   - `python -m app.db.seed`
   - `python -c "from app.services.rag_service import RagService; print(RagService().index_knowledge_base('../knowledge_base'))"`
-- Start backend:
-  - `uvicorn app.main:app --reload`
-- Open the frontend:
-  - `index.html`
-- If backend runs somewhere other than `http://127.0.0.1:8000`, set:
-  - `window.BLUE_GARAGE_API_BASE_URL`
+- Start backend: `uvicorn app.main:app --reload`.
+- Open the frontend: `index.html`.
+- If backend runs somewhere other than `http://127.0.0.1:8000`, set `window.BLUE_GARAGE_API_BASE_URL` in the browser console before reload.
 - Decide whether local runtime artifacts should be kept or regenerated:
   - `backend/blue_garage.db`
   - `backend/chroma_db/`
-- Confirm whether the v3 research source files should remain committed or be replaced by smaller derived artifacts before public release.
+- Confirm whether raw research files should remain committed or be replaced by smaller derived artifacts before public release.
 - Review the K-pop notebook's body-metric content before any public demo copy; v3 currently avoids using those fields in persona behavior.
 - Before sharing publicly, confirm no secrets are present in `.env` or committed files.
 
 ## Additional Research Needed
 
-- Best current OpenAI model choice for:
-  - low-latency fan chat
-  - structured eval JSON
-  - high-quality persona preservation
-- Whether to use DSPy-style optimization directly or keep the lightweight v2 prompt-quality service.
-- Best design for pairwise LLM-as-judge evaluation while controlling position and verbosity bias.
-- Current OpenAI streaming and token usage APIs for accurate cost logging.
-- Best embedding approach for the MVP:
-  - OpenAI embeddings
-  - local sentence-transformer embeddings
-  - Chroma default embeddings
-  - hybrid keyword/vector search
-- Whether ChromaDB is the best local vector store for the portfolio demo, or whether FAISS/LanceDB would be simpler.
-- Safety and fan-boundary policy patterns for parasocial AI artist interactions.
-- Whether DISC-style routing is sufficient for the target users or should be replaced by a validated personality/persona framework.
-- Whether the fictional-character spreadsheet is synthetic and, if so, what real curated persona dataset should replace it.
-- How to evaluate manner-memory usefulness without encouraging unsafe imitation or over-personalization.
-- Memory extraction strategy:
-  - deterministic rules
-  - LLM extraction
-  - confidence scoring
-  - sensitivity labeling
-  - deletion/privacy workflow
-- Evaluation rubric design:
-  - heuristic scoring
-  - LLM-as-judge scoring
-  - calibration examples
-  - reviewer override workflow
-- Data privacy expectations for storing fan memories.
+- Verify the best current OpenAI model choices for low-latency fan chat, high-risk escalation, structured eval JSON, and judge adjudication.
+- Verify current OpenAI response usage, streaming usage, pricing, service tiers, `store=false`, and retention behavior against official docs before production.
+- Decide whether to use DSPy-style optimization directly or keep the lightweight prompt-quality service.
+- Design pairwise LLM-as-judge evaluation while controlling position, verbosity, and style bias.
+- Choose the production embedding and retrieval approach: OpenAI embeddings, local sentence-transformer embeddings, Chroma defaults, or hybrid keyword/vector search.
+- Decide whether ChromaDB remains the best local vector store for the portfolio demo or whether FAISS/LanceDB would be simpler.
+- Continue safety and fan-boundary policy research for parasocial AI artist interactions, especially minors, crisis, stalking/doxxing, dependency, and impersonation jailbreaks.
+- Decide whether DISC-style routing is sufficient for target users or should be replaced by a validated personality/persona framework.
+- Determine whether the fictional-character spreadsheet is synthetic and what curated persona dataset should replace it if needed.
+- Evaluate manner-memory usefulness without encouraging unsafe imitation or over-personalization.
+- Calibrate memory extraction thresholds, sensitivity labels, TTLs, consent language, and deletion/privacy workflows with representative users.
+- Calibrate the layered eval rubric with human reviewer overrides and reviewer agreement tracking.

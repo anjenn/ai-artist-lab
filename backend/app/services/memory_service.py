@@ -1,9 +1,71 @@
-from sqlalchemy import func, select
+from typing import Any
+
+from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
 from app.db.models import ConversationSummary, FanMemory, Message
 
 RESTRICTED_SENSITIVITY = {"restricted", "high"}
+LOW_MEMORY_TYPES = {"preference", "manner", "language", "tone", "content_interest"}
+MEDIUM_MEMORY_TYPES = {"event", "location", "age", "notification"}
+
+
+def classify_memory_candidate(
+    *,
+    content: str,
+    memory_type: str = "preference",
+    confidence: float = 0.7,
+    boundary_risk: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    text = content.lower()
+    labels = set((boundary_risk or {}).get("v4_labels") or [])
+    restricted_terms = [
+        "address",
+        "phone",
+        "password",
+        "government id",
+        "credit card",
+        "hotel",
+        "private schedule",
+        "precise location",
+    ]
+    high_terms = ["therapy", "diagnosis", "suicide", "kill myself", "can't live", "health", "finance"]
+    if labels & {"crisis", "dependency", "stalking_or_doxxing", "minor_safety"} or any(term in text for term in restricted_terms):
+        sensitivity = "restricted"
+        decision = "do_not_store"
+        reason = "Restricted or safety-sensitive disclosure must not become personalization memory."
+    elif any(term in text for term in high_terms):
+        sensitivity = "high"
+        decision = "do_not_store"
+        reason = "High-sensitivity content requires safety handling, not normal fan memory."
+    elif memory_type in MEDIUM_MEMORY_TYPES or any(term in text for term in ["seoul", "concert", "show", "ticket", "notify"]):
+        sensitivity = "medium"
+        decision = "ask_confirmation"
+        reason = "Medium-sensitivity memory needs explicit confirmation."
+    elif memory_type in LOW_MEMORY_TYPES and confidence >= 0.85:
+        sensitivity = "low"
+        decision = "auto_save"
+        reason = "Explicit low-risk memory with high confidence."
+    elif confidence >= 0.6:
+        sensitivity = "low"
+        decision = "ask_confirmation"
+        reason = "Low-risk but confidence is below the v4 auto-save threshold."
+    else:
+        sensitivity = "low"
+        decision = "do_not_store"
+        reason = "Confidence is too low for memory storage."
+
+    return {
+        "version": "v4",
+        "decision": decision,
+        "canonical_memory": content.strip(),
+        "category": memory_type,
+        "sensitivity": sensitivity,
+        "confidence": confidence,
+        "requires_user_confirmation": decision == "ask_confirmation",
+        "ttl_days": 365 if sensitivity == "low" else 120 if sensitivity == "medium" else None,
+        "reason": reason,
+    }
 
 
 def load_recent_messages(db: Session, conversation_id: int, limit: int = 10) -> list[Message]:
@@ -74,6 +136,50 @@ def delete_fan_memory(db: Session, fan_id: int, memory_id: int) -> bool:
     return True
 
 
+def delete_all_fan_memories(db: Session, fan_id: int, artist_id: int) -> dict[str, Any]:
+    memories = list(
+        db.scalars(
+            select(FanMemory).where(FanMemory.fan_id == fan_id, FanMemory.artist_id == artist_id)
+        ).all()
+    )
+    count = len(memories)
+    db.execute(delete(FanMemory).where(FanMemory.fan_id == fan_id, FanMemory.artist_id == artist_id))
+    db.commit()
+    return {
+        "deleted": count,
+        "deletion_test_passed": load_fan_memories(db, fan_id=fan_id, artist_id=artist_id) == [],
+        "note": "V4 local deletion cascade removes DB memories; vector/keyword stores must also be tested when memory indexing is enabled.",
+    }
+
+
+def export_fan_memories(db: Session, fan_id: int, artist_id: int) -> dict[str, Any]:
+    memories = list(
+        db.scalars(
+            select(FanMemory)
+            .where(FanMemory.fan_id == fan_id, FanMemory.artist_id == artist_id)
+            .order_by(FanMemory.updated_at.desc(), FanMemory.id.desc())
+        ).all()
+    )
+    return {
+        "fan_id": fan_id,
+        "artist_id": artist_id,
+        "export_version": "v4_memory_export",
+        "items": [
+            {
+                "id": memory.id,
+                "memory_type": memory.memory_type,
+                "content": memory.content,
+                "confidence": memory.confidence,
+                "sensitivity": memory.sensitivity,
+                "source_message_id": memory.source_message_id,
+                "created_at": memory.created_at.isoformat(),
+                "updated_at": memory.updated_at.isoformat(),
+            }
+            for memory in memories
+        ],
+    }
+
+
 def summarize_if_needed(db: Session, conversation_id: int, threshold: int = 30) -> ConversationSummary | None:
     total = db.scalar(select(func.count(Message.id)).where(Message.conversation_id == conversation_id)) or 0
     if total <= threshold:
@@ -114,4 +220,3 @@ def summarize_if_needed(db: Session, conversation_id: int, threshold: int = 30) 
     db.commit()
     db.refresh(summary)
     return summary
-

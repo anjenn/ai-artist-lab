@@ -1518,6 +1518,15 @@
             </section>
 
             <section class="card">
+              <h4>V4 model + usage route</h4>
+              <div id="debugV4Route">
+                <p><strong>route:</strong> fan_chat_default</p>
+                <p><strong>model:</strong> local-mock · recommended gpt-5.4-mini</p>
+                <p><strong>usage:</strong> waiting for completed response</p>
+              </div>
+            </section>
+
+            <section class="card">
               <h4>Retrieved fan memory</h4>
               <div id="debugMemory">
                 <p><strong>event:</strong> Fan had an important exam and felt anxious about the result.</p>
@@ -1791,7 +1800,7 @@ Sources:
           <header class="bench-head">
             <div>
               <h4 id="bench-title">Version Benchmark</h4>
-              <p>Compact matrix view for the saved v1 MVP, v2 prompt-quality/localization build, and v3 research-seeded persona lab.</p>
+              <p>Compact matrix view for the saved v1 MVP, v2 prompt-quality/localization build, v3 persona lab, and v4 technical architecture upgrade.</p>
             </div>
             <span class="bench-mode">Latest vs Baseline</span>
           </header>
@@ -1807,15 +1816,15 @@ Sources:
               <span>Prompt + KR</span>
               <strong>20 tests</strong>
             </article>
-            <article class="bench-version-card is-current">
+            <article class="bench-version-card">
               <b>V3</b>
               <span>Current research lab</span>
               <strong>25 tests · +5</strong>
             </article>
-            <article class="bench-version-card is-pending">
+            <article class="bench-version-card is-current">
               <b>V4</b>
-              <span>Pending</span>
-              <strong>—</strong>
+              <span>Technical ops</span>
+              <strong>35 tests · +10</strong>
             </article>
             <article class="bench-version-card is-pending">
               <b>V5</b>
@@ -1826,8 +1835,8 @@ Sources:
 
           <div class="bench-insight-strip" aria-label="Benchmark highlights">
             <div class="bench-insight">
-              <b id="benchmarkImproved">9/11</b>
-              <span>improved v3 metrics</span>
+              <b id="benchmarkImproved">12/16</b>
+              <span>improved v4 metrics</span>
             </div>
             <div class="bench-insight">
               <b id="benchmarkRegressions">0</b>
@@ -1842,7 +1851,7 @@ Sources:
               <span>largest single gain</span>
             </div>
             <div class="bench-mini-hist" id="benchmarkHistogram" aria-label="Delta histogram">
-              <div class="bench-hist-title">Δ histogram<br />V3 - V2</div>
+              <div class="bench-hist-title">Δ histogram<br />V4 - V3</div>
               <div class="bench-hist-bin">
                 <b>3</b>
                 <i style="--h: 100%;"></i>
@@ -1887,17 +1896,17 @@ Sources:
                   <td class="bench-unit">tests</td>
                   <td class="bench-version"><span class="bench-score" style="--p: 36%;">9</span></td>
                   <td class="bench-version"><span class="bench-score" style="--p: 80%;">20</span></td>
-                  <td class="bench-version"><span class="bench-score is-current" style="--p: 100%;">25</span></td>
+                  <td class="bench-version"><span class="bench-score" style="--p: 71%;">25</span></td>
+                  <td class="bench-version"><span class="bench-score is-current" style="--p: 100%;">35</span></td>
                   <td class="bench-version"><span class="bench-score is-empty">—</span></td>
-                  <td class="bench-version"><span class="bench-score is-empty">—</span></td>
-                  <td><span class="bench-delta">+5</span></td>
+                  <td><span class="bench-delta">+10</span></td>
                   <td class="bench-evidence" title="pytest service suite">pytest service suite</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <p class="bench-note">Cell bars are row-normalized. Empty V4/V5 columns stay visible so later versions can be filled without redesigning the table.</p>
+          <p class="bench-note">Cell bars are row-normalized. V4 is the current technical architecture build; the empty V5 column stays visible for later planning.</p>
         </section>
 
         <br />
@@ -2133,6 +2142,70 @@ Sources:
 
         <br />
         <section class="card">
+          <h4>V4 technical research policy</h4>
+          <p id="v4Caveat">OpenAI-specific model names, pricing, retention behavior, and API details are research recommendations that must be checked against official docs before production release.</p>
+          <div class="tag-list" id="technicalRuntimeSurfaces">
+            <span class="tag info">/dashboard/technical-research</span>
+            <span class="tag info">chat debug model_route</span>
+            <span class="tag info">memory preview/export</span>
+          </div>
+        </section>
+
+        <br />
+        <div class="two-col">
+          <section class="card">
+            <h4>Model cascade</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Route</th>
+                  <th>Recommended</th>
+                  <th>Use when</th>
+                </tr>
+              </thead>
+              <tbody id="technicalRouteTable">
+                <tr>
+                  <td>fan_chat_default</td>
+                  <td>gpt-5.4-mini</td>
+                  <td>low-risk streamed fan chat</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+          <section class="card">
+            <h4>Memory privacy gates</h4>
+            <div class="tag-list" id="technicalMemoryList">
+              <span class="tag good">view</span>
+              <span class="tag good">export</span>
+              <span class="tag good">delete all</span>
+            </div>
+            <p id="technicalEmbeddingSummary">Hybrid keyword + vector retrieval; ChromaDB remains the demo store.</p>
+          </section>
+        </div>
+
+        <br />
+        <section class="card">
+          <h4>Layered evaluation policy</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Layer</th>
+                <th>Name</th>
+                <th>Checks</th>
+              </tr>
+            </thead>
+            <tbody id="technicalEvalLayers">
+              <tr>
+                <td>0</td>
+                <td>unit_tests</td>
+                <td>prompt assembly, memory filters, deletion cascade</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <br />
+        <section class="card">
           <h4>Implementation module map</h4>
           <div class="code-block">backend/
   app/main.py
@@ -2142,6 +2215,7 @@ Sources:
   app/services/rag_service.py
   app/services/eval_service.py
   app/services/safety_service.py
+  app/services/technical_research.py
   app/db/models.py
   app/db/session.py
 index.html
@@ -2150,7 +2224,10 @@ knowledge_base/
   debut_story.md
   discography.md
   worldview.md
-  fan_policy.md</div>
+  fan_policy.md
+  prompt_quality_research_v2.md
+  persona_research_v3.md
+  technical_research_v4.md</div>
         </section>
       </section>
     </main>
@@ -2172,6 +2249,7 @@ knowledge_base/
     const promptStrategySummary = document.getElementById('promptStrategySummary');
     const promptOutputContract = document.getElementById('promptOutputContract');
     const promptTrustBoundary = document.getElementById('promptTrustBoundary');
+    const debugV4Route = document.getElementById('debugV4Route');
     const debugMemory = document.getElementById('debugMemory');
     const debugRag = document.getElementById('debugRag');
     const ragSearchInput = document.getElementById('ragSearchInput');
@@ -2201,6 +2279,12 @@ knowledge_base/
     const researchDistributionTable = document.getElementById('researchDistributionTable');
     const researchQualityNote = document.getElementById('researchQualityNote');
     const kirinoEvalTable = document.getElementById('kirinoEvalTable');
+    const v4Caveat = document.getElementById('v4Caveat');
+    const technicalRuntimeSurfaces = document.getElementById('technicalRuntimeSurfaces');
+    const technicalRouteTable = document.getElementById('technicalRouteTable');
+    const technicalMemoryList = document.getElementById('technicalMemoryList');
+    const technicalEmbeddingSummary = document.getElementById('technicalEmbeddingSummary');
+    const technicalEvalLayers = document.getElementById('technicalEvalLayers');
     const evalPersona = document.getElementById('evalPersona');
     const evalContext = document.getElementById('evalContext');
     const evalMemory = document.getElementById('evalMemory');
@@ -2255,6 +2339,7 @@ knowledge_base/
       'Send': '보내기',
       'Prompt assembly': '프롬프트 조립',
       'Prompt quality strategy': '프롬프트 품질 전략',
+      'V4 model + usage route': 'V4 모델 + 사용량 라우트',
       'Retrieved fan memory': '검색된 팬 메모리',
       'Retrieved RAG chunks': '검색된 RAG 청크',
       'Auto evaluation': '자동 평가',
@@ -2318,31 +2403,33 @@ knowledge_base/
       'Version Benchmark': '버전 벤치마크',
       'Metric-based comparison between the saved v1 runnable MVP and the v2 prompt-quality plus localization upgrade.': '저장된 v1 실행형 MVP와 v2 프롬프트 품질 및 현지화 업그레이드를 수치 기반으로 비교합니다.',
       'Metric-based comparison between the saved v1 runnable MVP, v2 prompt-quality/localization upgrade, and v3 research-seeded persona lab.': '저장된 v1 실행형 MVP, v2 프롬프트 품질/현지화 업그레이드, v3 리서치 seed 페르소나 랩을 수치 기반으로 비교합니다.',
-      'Compact matrix view for the saved v1 MVP, v2 prompt-quality/localization build, and v3 research-seeded persona lab.': '저장된 v1 MVP, v2 프롬프트 품질/현지화 빌드, v3 리서치 seed 페르소나 랩을 한 화면에서 비교하는 compact matrix view입니다.',
+      'Compact matrix view for the saved v1 MVP, v2 prompt-quality/localization build, v3 persona lab, and v4 technical architecture upgrade.': '저장된 v1 MVP, v2 프롬프트 품질/현지화 빌드, v3 페르소나 랩, v4 기술 아키텍처 업그레이드를 한 화면에서 비교합니다.',
       'Latest vs Baseline': '최신 버전 vs 기준선',
       'Saved MVP': '저장된 MVP',
       'Prompt + KR': '프롬프트 + 한국어',
       'Current research lab': '현재 리서치 랩',
+      'Technical ops': '기술 운영',
       'Pending': '예정',
       'Optional': '선택',
+      '35 tests · +10': '35 테스트 · +10',
       '25 tests · +5': '25 테스트 · +5',
       '20 tests': '20 테스트',
       '9 tests': '9 테스트',
       'improved metrics': '개선된 지표',
-      'improved v3 metrics': '개선된 v3 지표',
+      'improved v4 metrics': '개선된 v4 지표',
       'regressions': '회귀',
       'new coverage areas': '새 커버리지 영역',
       'largest single gain': '최대 단일 개선',
       'Δ histogram': '증감 히스토그램',
-      'V3 - V2': 'V3 - V2',
+      'V4 - V3': 'V4 - V3',
       'Metric': '지표',
       'Unit': '단위',
       'v1': 'v1',
       'v2': 'v2',
       'Delta': '증감',
       'Improvement': '개선율',
-      'Delta vs v2': 'v2 대비 증감',
-      'v3 Improvement': 'v3 개선율',
+      'Delta vs v3': 'v3 대비 증감',
+      'v4 Improvement': 'v4 개선율',
       'Evidence': '근거',
       'Automated regression tests': '자동화 회귀 테스트',
       'tests': '테스트',
@@ -2455,6 +2542,13 @@ knowledge_base/
       'Research persona modes': '리서치 페르소나 모드',
       'Persona/manner eval criteria': '페르소나/말투 평가 기준',
       'Knowledge-base documents': '지식 베이스 문서',
+      'Model routing policies': '모델 라우팅 정책',
+      'Runtime usage log fields': '런타임 사용량 로그 필드',
+      'Memory privacy controls': '메모리 개인정보 제어',
+      'Bounded fandom safety labels': '경계 있는 팬덤 안전 라벨',
+      'Evaluation layers': '평가 계층',
+      'controls': '제어',
+      'labels': '라벨',
       'Recent eval logs': '최근 평가 로그',
       '3 rows': '3행',
       'rows': '행',
@@ -2465,6 +2559,15 @@ knowledge_base/
       'Reviewer comment': '리뷰어 코멘트',
       'System Architecture': '시스템 아키텍처',
       'The core engineering value is the orchestration layer before and after the LLM call.': '핵심 엔지니어링 가치는 LLM 호출 전후의 오케스트레이션 계층에 있습니다.',
+      'V4 technical research policy': 'V4 기술 리서치 정책',
+      'Model cascade': '모델 캐스케이드',
+      'Recommended': '권장',
+      'Use when': '사용 조건',
+      'Memory privacy gates': '메모리 개인정보 게이트',
+      'Layered evaluation policy': '계층형 평가 정책',
+      'Layer': '계층',
+      'Name': '이름',
+      'Checks': '검사',
       'Implementation module map': '구현 모듈 맵'
     };
 
@@ -2534,6 +2637,7 @@ knowledge_base/
         loadVersionBenchmark();
       }
       if (activePanel === 'tab-research') loadPersonaResearch();
+      if (activePanel === 'tab-architecture') loadTechnicalResearch();
     }
 
     function setTab(tab) {
@@ -2543,6 +2647,7 @@ knowledge_base/
       if (tab === 'eval') loadDashboard();
       if (tab === 'rag') searchKnowledgeBase();
       if (tab === 'research') loadPersonaResearch();
+      if (tab === 'architecture') loadTechnicalResearch();
     }
 
     buttons.forEach((button) => {
@@ -2669,7 +2774,8 @@ knowledge_base/
       const rag = (debugPayload.used_rag || [])[0];
       const evalScore = debugPayload.evaluation?.overall_score;
       const source = rag ? `${rag.source}#${rag.chunk_id}` : 'none';
-      return `rag: ${source} · eval overall: ${evalScore || 'n/a'}/5 · latency: ${debugPayload.latency_ms}ms`;
+      const route = debugPayload.model_route?.route || 'fan_chat_default';
+      return `rag: ${source} · route: ${route} · eval overall: ${evalScore || 'n/a'}/5 · latency: ${debugPayload.latency_ms}ms`;
     }
 
     function renderDebugPayload(payload) {
@@ -2691,6 +2797,20 @@ knowledge_base/
       evalContext.textContent = formatScore(evaluation.context_relevance);
       evalMemory.textContent = formatScore(evaluation.memory_usage);
       evalSafety.textContent = formatScore(evaluation.safety);
+      renderV4Route(payload);
+    }
+
+    function renderV4Route(payload) {
+      const route = payload.model_route || {};
+      const usage = payload.usage_log || {};
+      const v4Eval = payload.v4_eval || {};
+      const labels = payload.boundary_risk?.v4_labels || ['normal'];
+      debugV4Route.innerHTML = `
+        <p><strong>route:</strong> ${escapeHtml(route.route || 'fan_chat_default')} · ${escapeHtml(labels.join(', '))}</p>
+        <p><strong>model:</strong> ${escapeHtml(route.runtime_model || 'local-mock')} · recommended ${escapeHtml(route.recommended_model || 'gpt-5.4-mini')}</p>
+        <p><strong>usage:</strong> ${escapeHtml(String(usage.total_tokens || 0))} tokens · cost ${escapeHtml(formatCost(usage.estimated_cost_usd))}</p>
+        <p><strong>v4 eval:</strong> ${escapeHtml(v4Eval.rubric_version || 'fan_eval_v0.4')} · review ${escapeHtml(String(Boolean(v4Eval.reviewer_required)))}</p>
+      `;
     }
 
     function renderPromptStrategy(strategy) {
@@ -2761,19 +2881,24 @@ knowledge_base/
         renderVersionBenchmark(benchmark);
       } catch {
         renderVersionBenchmark({
-          summary: { improved: 9, metric_count: 11, regressions: 0 },
+          summary: { improved: 12, metric_count: 16, regressions: 0 },
           metrics: [
-            { metric: 'Automated regression tests', unit: 'tests', v1: 9, v2: 20, v3: 25, delta: 5, improvement_pct: 25, evidence: 'pytest service suite' },
-            { metric: 'Prompt strategy metadata', unit: 'fields', v1: 0, v2: 6, v3: 7, delta: 1, improvement_pct: 16.7, evidence: 'strategy debug payload with persona_mode' },
-            { metric: 'RAG provenance metadata', unit: 'fields/chunk', v1: 2, v2: 6, v3: 6, delta: 0, improvement_pct: 0, evidence: 'source, chunk ID, citation, role, trust, injection risk' },
-            { metric: 'Prompt security guardrails', unit: 'checks', v1: 2, v2: 5, v3: 6, delta: 1, improvement_pct: 20, evidence: 'manner-memory privacy rule' },
-            { metric: 'Korean intent coverage', unit: 'routes', v1: 0, v2: 4, v3: 7, delta: 3, improvement_pct: 75, evidence: 'persona, support, research search terms' },
-            { metric: 'Prompt quality artifacts', unit: 'files', v1: 0, v2: 9, v3: 11, delta: 2, improvement_pct: 22.2, evidence: 'v3 research analysis and RAG research note' },
-            { metric: 'Frontend language modes', unit: 'modes', v1: 1, v2: 2, v3: 2, delta: 0, improvement_pct: 0, evidence: 'English/Korean top-nav switch retained' },
-            { metric: 'Research source coverage', unit: 'sources', v1: 0, v2: 0, v3: 4, delta: 4, improvement_pct: null, evidence: 'PDFs, spreadsheet, notebook' },
-            { metric: 'Research persona modes', unit: 'modes', v1: 0, v2: 0, v3: 3, delta: 3, improvement_pct: null, evidence: 'companion, support, task mode routing' },
-            { metric: 'Persona/manner eval criteria', unit: 'criteria', v1: 0, v2: 0, v3: 3, delta: 3, improvement_pct: null, evidence: 'response relevance, persona fit, natural manner' },
-            { metric: 'Knowledge-base documents', unit: 'documents', v1: 5, v2: 5, v3: 6, delta: 1, improvement_pct: 20, evidence: 'persona_research_v3.md added' },
+            { metric: 'Automated regression tests', unit: 'tests', v1: 9, v2: 20, v3: 25, v4: 35, delta: 10, improvement_pct: 40, evidence: 'pytest service suite' },
+            { metric: 'Prompt strategy metadata', unit: 'fields', v1: 0, v2: 6, v3: 7, v4: 10, delta: 3, improvement_pct: 42.9, evidence: 'strategy, persona_mode, model_route, usage_log, v4_eval' },
+            { metric: 'RAG provenance metadata', unit: 'fields/chunk', v1: 2, v2: 6, v3: 6, v4: 6, delta: 0, improvement_pct: 0, evidence: 'source, chunk ID, citation, role, trust, injection risk' },
+            { metric: 'Prompt security guardrails', unit: 'checks', v1: 2, v2: 5, v3: 6, v4: 10, delta: 4, improvement_pct: 66.7, evidence: 'v4 labels, review cues, storage gate, cost/latency gate' },
+            { metric: 'Korean intent coverage', unit: 'routes', v1: 0, v2: 4, v3: 7, v4: 10, delta: 3, improvement_pct: 42.9, evidence: 'prompt-security, privacy, deletion terms' },
+            { metric: 'Prompt quality artifacts', unit: 'files', v1: 0, v2: 9, v3: 11, v4: 14, delta: 3, improvement_pct: 27.3, evidence: 'v4 technical research and KB artifacts' },
+            { metric: 'Frontend language modes', unit: 'modes', v1: 1, v2: 2, v3: 2, v4: 2, delta: 0, improvement_pct: 0, evidence: 'English/Korean top-nav switch retained' },
+            { metric: 'Research source coverage', unit: 'sources', v1: 0, v2: 0, v3: 4, v4: 5, delta: 1, improvement_pct: 25, evidence: 'v4 overall technical research' },
+            { metric: 'Research persona modes', unit: 'modes', v1: 0, v2: 0, v3: 3, v4: 3, delta: 0, improvement_pct: 0, evidence: 'companion, support, task mode routing' },
+            { metric: 'Persona/manner eval criteria', unit: 'criteria', v1: 0, v2: 0, v3: 3, v4: 3, delta: 0, improvement_pct: 0, evidence: 'response relevance, persona fit, natural manner' },
+            { metric: 'Knowledge-base documents', unit: 'documents', v1: 5, v2: 5, v3: 6, v4: 8, delta: 2, improvement_pct: 33.3, evidence: 'v2/v3/v4 RAG knowledge notes' },
+            { metric: 'Model routing policies', unit: 'routes', v1: 0, v2: 0, v3: 0, v4: 4, delta: 4, improvement_pct: null, evidence: 'fan chat default/escalation, structured eval, judge adjudication' },
+            { metric: 'Runtime usage log fields', unit: 'fields', v1: 0, v2: 0, v3: 0, v4: 23, delta: 23, improvement_pct: null, evidence: 'route, model, tokens, cost, retrieval docs, memories, eval version' },
+            { metric: 'Memory privacy controls', unit: 'controls', v1: 1, v2: 2, v3: 3, v4: 6, delta: 3, improvement_pct: 100, evidence: 'view, create, delete, preview, export, delete all' },
+            { metric: 'Bounded fandom safety labels', unit: 'labels', v1: 2, v2: 3, v3: 3, v4: 8, delta: 5, improvement_pct: 166.7, evidence: 'normal, romance, dependency, impersonation, stalking, minor, crisis, harassment' },
+            { metric: 'Evaluation layers', unit: 'layers', v1: 1, v2: 2, v3: 2, v4: 4, delta: 2, improvement_pct: 100, evidence: 'unit, heuristic, judge-ready, human-review layers' },
           ],
         });
       }
@@ -2827,6 +2952,71 @@ knowledge_base/
       };
     }
 
+    async function loadTechnicalResearch() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/dashboard/technical-research`);
+        if (!response.ok) throw new Error('Technical research request failed');
+        const analysis = await response.json();
+        renderTechnicalResearch(analysis);
+      } catch {
+        renderTechnicalResearch(localTechnicalResearchFallback());
+      }
+    }
+
+    function localTechnicalResearchFallback() {
+      return {
+        version: 'v4',
+        caveat: 'OpenAI-specific model names, pricing, retention behavior, and API details are research recommendations that must be checked against official docs before production release.',
+        model_routes: [
+          { route: 'fan_chat_default', recommended_model: 'gpt-5.4-mini', use_when: 'normal low-risk fan chat with adequate retrieval confidence' },
+          { route: 'fan_chat_escalation', recommended_model: 'gpt-5.5', use_when: 'dependency, romance escalation, stalking, crisis, impersonation, or weak retrieval' },
+          { route: 'structured_eval', recommended_model: 'gpt-5.4-mini', use_when: 'automated eval rows, memory extraction labels, and safety labels' },
+          { route: 'judge_adjudication', recommended_model: 'gpt-5.5', use_when: 'gold rubrics, reviewer disagreements, or policy-sensitive adjudication' },
+        ],
+        embedding_strategy: {
+          search: 'hybrid keyword + vector retrieval',
+          vector_store: 'keep ChromaDB for the existing demo; evaluate LanceDB if memory CRUD becomes central',
+        },
+        memory_policy: {
+          controls: ['view', 'edit', 'delete', 'delete_all', 'export', 'disable_future_memory'],
+        },
+        eval_layers: [
+          { layer: 0, name: 'unit_tests', checks: ['prompt assembly', 'memory filters', 'deletion cascade', 'JSON/schema validation'] },
+          { layer: 1, name: 'heuristic_gates', checks: ['no banned intimacy phrases', 'no sensitive memory auto-save', 'cost and latency within budget'] },
+          { layer: 2, name: 'llm_as_judge', checks: ['persona preservation', 'fan-boundary handling', 'grounding', 'privacy'] },
+          { layer: 3, name: 'human_review', checks: ['crisis', 'minor safety', 'stalking', 'impersonation'] },
+        ],
+        implemented_runtime_surfaces: [
+          '/dashboard/technical-research',
+          '/chat/stream debug.model_route',
+          '/chat/stream debug.usage_log',
+          '/fans/{fan_id}/memories/preview',
+          '/fans/{fan_id}/memories/export',
+        ],
+      };
+    }
+
+    function renderTechnicalResearch(analysis) {
+      v4Caveat.textContent = translateMessage(analysis.caveat || '');
+      technicalRuntimeSurfaces.innerHTML = (analysis.implemented_runtime_surfaces || [])
+        .map((surface) => `<span class="tag info">${escapeHtml(surface)}</span>`)
+        .join('');
+      technicalRouteTable.innerHTML = (analysis.model_routes || []).map((route) => `<tr>
+        <td>${escapeHtml(route.route)}</td>
+        <td>${escapeHtml(route.recommended_model)}</td>
+        <td>${escapeHtml(translateMessage(route.use_when || ''))}</td>
+      </tr>`).join('');
+      const controls = analysis.memory_policy?.controls || [];
+      technicalMemoryList.innerHTML = controls.map((control) => `<span class="tag good">${escapeHtml(control)}</span>`).join('');
+      const embedding = analysis.embedding_strategy || {};
+      technicalEmbeddingSummary.textContent = `${embedding.search || ''}; ${embedding.vector_store || ''}`;
+      technicalEvalLayers.innerHTML = (analysis.eval_layers || []).map((layer) => `<tr>
+        <td>${escapeHtml(layer.layer)}</td>
+        <td>${escapeHtml(layer.name)}</td>
+        <td>${escapeHtml((layer.checks || []).join(', '))}</td>
+      </tr>`).join('');
+    }
+
     function renderMetrics(metrics) {
       metricOverall.textContent = metrics.avg_overall_score ? metrics.avg_overall_score.toFixed(1) : '0.0';
       metricHallucination.textContent = `${((metrics.avg_hallucination_risk || 0) * 20).toFixed(1)}%`;
@@ -2863,18 +3053,19 @@ knowledge_base/
       const metrics = benchmark.metrics || [];
       benchmarkImproved.textContent = `${summary.improved || 0}/${summary.metric_count || metrics.length}`;
       benchmarkRegressions.textContent = String(summary.regressions || 0);
-      benchmarkNewCoverage.textContent = String(metrics.filter((item) => numericValue(item.v2) === 0 && numericValue(item.v3) > 0).length);
+      benchmarkNewCoverage.textContent = String(metrics.filter((item) => numericValue(item.v3) === 0 && numericValue(item.v4) > 0).length);
       const largestGain = Math.max(0, ...metrics.map((item) => numericValue(item.delta)));
       benchmarkLargestGain.textContent = `+${largestGain}`;
       renderBenchmarkVersionStrip(metrics);
       renderBenchmarkHistogram(metrics);
       if (!metrics.length) return;
       benchmarkTable.innerHTML = metrics.map((item) => {
-        const values = [numericValue(item.v1), numericValue(item.v2), numericValue(item.v3)];
+        const values = [numericValue(item.v1), numericValue(item.v2), numericValue(item.v3), numericValue(item.v4)];
         const rowMax = Math.max(1, ...values);
         const v3 = Object.prototype.hasOwnProperty.call(item, 'v3') ? item.v3 : item.v2;
+        const v4 = Object.prototype.hasOwnProperty.call(item, 'v4') ? item.v4 : null;
         const delta = numericValue(item.delta);
-        const isNew = numericValue(item.v2) === 0 && numericValue(v3) > 0;
+        const isNew = numericValue(item.v3) === 0 && numericValue(v4) > 0;
         const metricLabel = translateMessage(item.metric);
         const metricSubLabel = currentLanguage === 'ko' ? item.metric : compactEvidence(item.evidence);
         return `<tr>
@@ -2882,8 +3073,8 @@ knowledge_base/
           <td class="bench-unit">${escapeHtml(translateMessage(item.unit))}</td>
           <td class="bench-version">${renderBenchmarkScore(item.v1, rowMax)}</td>
           <td class="bench-version">${renderBenchmarkScore(item.v2, rowMax)}</td>
-          <td class="bench-version">${renderBenchmarkScore(v3, rowMax, true)}</td>
-          <td class="bench-version">${renderBenchmarkScore(null, rowMax)}</td>
+          <td class="bench-version">${renderBenchmarkScore(v3, rowMax)}</td>
+          <td class="bench-version">${renderBenchmarkScore(v4, rowMax, true)}</td>
           <td class="bench-version">${renderBenchmarkScore(null, rowMax)}</td>
           <td><span class="bench-delta ${isNew ? 'is-new' : ''}">${escapeHtml(formatBenchmarkDelta(delta, isNew))}</span></td>
           <td class="bench-evidence" title="${escapeHtml(item.evidence)}">${escapeHtml(translateMessage(compactEvidence(item.evidence)))}</td>
@@ -2920,12 +3111,13 @@ knowledge_base/
       const v1Tests = numericValue(tests.v1) || 9;
       const v2Tests = numericValue(tests.v2) || 20;
       const v3Tests = numericValue(tests.v3) || 25;
-      const v3Delta = numericValue(tests.delta);
+      const v4Tests = numericValue(tests.v4) || 35;
+      const v4Delta = numericValue(tests.delta);
       benchmarkVersionStrip.innerHTML = [
         { version: 'V1', label: 'Saved MVP', stat: `${v1Tests} tests` },
         { version: 'V2', label: 'Prompt + KR', stat: `${v2Tests} tests` },
-        { version: 'V3', label: 'Current research lab', stat: `${v3Tests} tests · +${v3Delta}`, current: true },
-        { version: 'V4', label: 'Pending', stat: '—', pending: true },
+        { version: 'V3', label: 'Current research lab', stat: `${v3Tests} tests` },
+        { version: 'V4', label: 'Technical ops', stat: `${v4Tests} tests · +${v4Delta}`, current: true },
         { version: 'V5', label: 'Optional', stat: '—', pending: true },
       ].map((item) => `<article class="bench-version-card ${item.current ? 'is-current' : ''} ${item.pending ? 'is-pending' : ''}">
         <b>${escapeHtml(item.version)}</b>
@@ -2949,7 +3141,7 @@ knowledge_base/
         if (delta >= 10) bins[3].count += 1;
       });
       const maxCount = Math.max(1, ...bins.map((bin) => bin.count));
-      benchmarkHistogram.innerHTML = `<div class="bench-hist-title">${escapeHtml(translateMessage('Δ histogram'))}<br />${escapeHtml(translateMessage('V3 - V2'))}</div>${bins.map((bin) => {
+      benchmarkHistogram.innerHTML = `<div class="bench-hist-title">${escapeHtml(translateMessage('Δ histogram'))}<br />${escapeHtml(translateMessage('V4 - V3'))}</div>${bins.map((bin) => {
         const height = bin.count ? Math.max(16, Math.round((bin.count / maxCount) * 100)) : 7;
         return `<div class="bench-hist-bin">
           <b>${escapeHtml(bin.count)}</b>
@@ -3045,6 +3237,10 @@ knowledge_base/
 
     function formatScore(value) {
       return typeof value === 'number' ? value.toFixed(1) : '—';
+    }
+
+    function formatCost(value) {
+      return typeof value === 'number' ? `$${value.toFixed(4)}` : 'verify pricing';
     }
 
     chatForm.addEventListener('submit', (event) => {

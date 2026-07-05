@@ -10,7 +10,7 @@
 
 - 모듈형 라우터와 서비스를 갖춘 FastAPI 백엔드
 - SQLAlchemy 모델 기반 SQLite 데이터베이스
-- LUMI NOA, 데모 팬, 프롬프트 버전 v0.3, 팬 메모리를 위한 멱등 seed 데이터
+- LUMI NOA, 데모 팬, `v0.6-technical-ops`까지의 프롬프트 버전, 팬 메모리를 위한 멱등 seed 데이터
 - ChromaDB 사용 가능 시 ChromaDB를 사용하고, 불가능할 경우 결정론적 로컬 fallback을 사용하는 `knowledge_base/*.md` 기반 로컬 RAG
 - `POST /chat/stream` Server-Sent Events 채팅 스트리밍
 - `OPENAI_API_KEY`가 설정되지 않았을 때 사용하는 결정론적 로컬 LLM mock
@@ -18,33 +18,37 @@
 - 이름 있는 전략, technique tag, output contract, quality check, untrusted-content boundary를 갖춘 v2 프롬프트 품질 계층
 - 검색된 지식 청크의 prompt-injection 탐지 메타데이터
 - `researches/v3_research_2_chatbot_persona` 기반 v3 리서치 페르소나 랩
-- 프롬프트 버전 `v0.5-research-persona`, 목적 인식 DISC 모드, 말투 메모리 가이드를 위한 v3 seed 데이터
-- 출처 커버리지, 데이터셋 분포, 페르소나 모드, KIRINO 평가 지표를 제공하는 `/dashboard/persona-research` 엔드포인트
+- 목적 인식 DISC 모드와 말투 메모리 가이드를 위한 v3 seed 데이터
+- `researches/v4_overall_technical_researches.md` 기반 v4 기술 아키텍처 계층
+- v4 모델 route 메타데이터, bounded-fandom 안전 label, usage-log schema, 메모리 개인정보 gate, 계층형 eval gate
+- `/dashboard/persona-research`, `/dashboard/technical-research`, `/dashboard/version-benchmark` 대시보드 엔드포인트
+- 메모리 개인정보 workflow를 위한 팬 메모리 preview/export/delete-all 엔드포인트
 - 프롬프트 품질, 페르소나 설계, 기술 아키텍처, 팬 경계 안전성, 메모리 개인정보, 평가 전략을 위한 리서치 기반 RAG 노트
-- mock fallback을 갖춘 live API 클라이언트로 업그레이드된 단일 파일 `index.html` 프론트엔드
-- 프롬프트 빌드, 메모리 필터링, RAG 검색, 평가를 위한 Pytest 커버리지
+- mock fallback을 갖춘 live API 클라이언트, 영어/한국어 전환, v4 벤치마크, 기술 아키텍처 카드를 포함한 단일 파일 `index.html` 프론트엔드
+- 프롬프트 빌드, 메모리 필터링, RAG 검색, 한국어 현지화, 기술 리서치 메타데이터, 평가를 위한 Pytest 커버리지
 
-## 벤치마크: v1 vs v2 vs v3
+## 벤치마크: v1 vs v2 vs v3 vs v4
 
-저장된 `v1` 실행형 MVP, v2 프롬프트 품질/현지화 빌드, v3 리서치 seed 페르소나 랩을 수치 기반으로 비교합니다.
+저장된 `v1` 실행형 MVP, v2 프롬프트 품질/현지화 빌드, v3 리서치 seed 페르소나 랩, v4 기술 아키텍처 빌드를 수치 기반으로 비교합니다.
 
-| 지표 | 단위 | v1 | v2 | v3 | v2 대비 증감 | v3 개선율 | 근거 |
-|---|---|---:|---:|---:|---:|---:|---|
-| 자동화 회귀 테스트 | 테스트 | 9 | 20 | 25 | +5 | +25% | pytest 서비스 테스트 |
-| 프롬프트 전략 메타데이터 | 필드 | 0 | 6 | 7 | +1 | +16.7% | strategy debug에 `persona_mode` 포함 |
-| RAG 출처 메타데이터 | 필드/청크 | 2 | 6 | 6 | 0 | 0% | source, chunk ID, citation, role, trust, injection risk |
-| 프롬프트 보안 가드레일 | 검사 | 2 | 5 | 6 | +1 | +20% | 말투 메모리 개인정보 규칙 추가 |
-| 한국어 intent 커버리지 | 경로 | 0 | 4 | 7 | +3 | +75% | persona/support/research 검색어 추가 |
-| 프롬프트 품질 산출물 | 파일 | 0 | 9 | 11 | +2 | +22.2% | v3 리서치 분석 및 RAG 리서치 노트 추가 |
-| 프론트엔드 언어 모드 | 모드 | 1 | 2 | 2 | 0 | 0% | 영어/한국어 상단 내비게이션 유지 |
-| 리서치 출처 커버리지 | 출처 | 0 | 0 | 4 | +4 | 신규 | PDF 2개, 스프레드시트 1개, 노트북 1개 |
-| 리서치 페르소나 모드 | 모드 | 0 | 0 | 3 | +3 | 신규 | companion-I/S, support-C/S, task-D/C |
-| 페르소나/말투 평가 기준 | 기준 | 0 | 0 | 3 | +3 | 신규 | 응답 관련성, 페르소나 적합성, 자연스러운 말투 |
-| 지식 베이스 문서 | 문서 | 5 | 5 | 6 | +1 | +20% | `persona_research_v3.md` 추가 |
+| 지표 | 단위 | v1 | v2 | v3 | v4 | v3 대비 증감 | v4 개선율 | 근거 |
+|---|---|---:|---:|---:|---:|---:|---:|---|
+| 자동화 회귀 테스트 | 테스트 | 9 | 20 | 25 | 35 | +10 | +40% | pytest 서비스 테스트 |
+| 프롬프트 전략 메타데이터 | 필드 | 0 | 6 | 7 | 10 | +3 | +42.9% | model route, safety label, usage log ID 추가 |
+| RAG 출처 메타데이터 | 필드/청크 | 2 | 6 | 6 | 6 | 0 | 0% | source, chunk ID, citation, role, trust, injection risk |
+| 프롬프트 보안 가드레일 | 검사 | 2 | 5 | 6 | 10 | +4 | +66.7% | bounded-fandom 및 memory-gate 검사 추가 |
+| 한국어 intent 커버리지 | 경로 | 0 | 4 | 7 | 10 | +3 | +42.9% | 한국어 경계/개인 위치 요청 coverage 추가 |
+| 프롬프트 품질 산출물 | 파일 | 0 | 9 | 11 | 14 | +3 | +27.3% | v4 technical, fan policy, benchmark artifact 추가 |
+| 프론트엔드 언어 모드 | 모드 | 1 | 2 | 2 | 2 | 0 | 0% | 영어/한국어 상단 전환 유지 |
+| 리서치 출처 커버리지 | 출처 | 0 | 0 | 4 | 5 | +1 | +25% | v4 기술 리서치 추가 |
+| 지식 베이스 문서 | 문서 | 5 | 5 | 6 | 8 | +2 | +33.3% | `technical_research_v4.md` 및 정책 업데이트 |
+| 모델 route 정책 | route | 0 | 0 | 0 | 4 | +4 | 신규 | default chat, escalation, structured eval, judge adjudication |
+| 런타임 usage log 필드 | 필드 | 0 | 0 | 0 | 23 | +23 | 신규 | hashed user, route, token, retrieval, memory, eval version |
+| 메모리 개인정보 제어 | 제어 | 1 | 1 | 2 | 6 | +4 | +200% | preview, create, list, single delete, export, delete all |
+| Bounded-fandom 안전 label | label | 0 | 2 | 3 | 8 | +5 | +166.7% | normal, dependency, crisis, minors, stalking 등 |
+| 평가 계층 | 계층 | 1 | 2 | 2 | 4 | +2 | +100% | unit, heuristic, judge-ready rubric, human review queue |
 
-벤치마크 기준: `/dashboard/version-benchmark`, `/dashboard/persona-research`, 자동화 테스트, Python 컴파일 확인, 프론트엔드 JavaScript 문법 확인, HTML 파싱, 실시간 SSE debug 메타데이터, 실시간 한국어 RAG 검색, 리서치 출처 분석.
-
-이 벤치마크 표는 저장된 v3 비교를 기준으로 합니다. 현재 knowledge base에는 tagged v3 snapshot 이후의 구현 전략 질문도 RAG가 답할 수 있도록 v2와 v4 리서치 파일 기반 노트가 추가되어 있습니다.
+벤치마크 기준: `/dashboard/version-benchmark`, `/dashboard/persona-research`, `/dashboard/technical-research`, 자동화 테스트, Python 컴파일 확인, 프론트엔드 JavaScript 문법 확인, HTML 파싱, 실시간 SSE debug 메타데이터, 실시간 한국어 RAG 검색, 리서치 출처 분석.
 
 ## V3 페르소나 리서치
 
@@ -60,6 +64,20 @@ V3는 `researches/v3_research_2_chatbot_persona`를 사용해 seed 및 분석합
 - `companion-is`: 일반 팬 채팅.
 - `support-cs`: 걱정, 스트레스, 상담 유사 턴.
 - `task-dc`: 세계관, 계획, 벤치마크, 분석 질문.
+
+## V4 기술 아키텍처
+
+V4는 `researches/v4_overall_technical_researches.md`의 권장사항을 런타임 메타데이터와 대시보드 surface로 구현합니다.
+
+- 모델 route 메타데이터는 기본 팬 채팅, 경계 민감 escalation, structured eval, judge adjudication route를 구분합니다.
+- 채팅 debug output은 `model_route`, `usage_log`, `v4_eval` 메타데이터를 포함합니다.
+- Usage log는 팬 ID를 hash 처리하고 route, runtime model, recommended model, token estimate, retrieval ID, memory ID, eval version, `store=false`를 기록합니다.
+- 안전성 탐지는 `romance_escalation`, `dependency`, `stalking_or_doxxing`, `minor_safety`, `crisis`, `impersonation_jailbreak` 같은 bounded-fandom label을 내보냅니다.
+- 메모리 개인정보 gate는 candidate memory를 auto-save, confirmation-required, do-not-store로 분류합니다.
+- 팬 메모리 개인정보 엔드포인트는 preview, export, single delete, delete-all workflow를 지원합니다.
+- `/dashboard/technical-research`는 model route, request-log schema, memory policy, eval layer, implementation caveat를 제공합니다.
+
+현재 로컬 runtime은 OpenAI key 없이도 동작합니다. 이 모드에서는 route metadata가 `local-mock` runtime model을 기록하고, production planning을 위한 research-backed recommended model route도 함께 유지합니다.
 
 ## 최신 리서치 지식 베이스
 
@@ -185,9 +203,9 @@ curl -N -X POST http://127.0.0.1:8000/chat/stream \
   -d '{"artist_id":1,"fan_id":1,"conversation_id":1,"message":"What was your debut song?"}'
 ```
 
-예상 동작: token event가 먼저 스트리밍되고, 그다음 사용된 메모리, 사용된 RAG 청크, latency, prompt version, evaluation score, boundary-risk metadata를 포함한 debug event가 옵니다.
+예상 동작: token event가 먼저 스트리밍되고, 그다음 사용된 메모리, 사용된 RAG 청크, latency, prompt version, evaluation score, boundary-risk metadata, 선택된 model route, v4 eval gate, usage-log metadata를 포함한 debug event가 옵니다.
 
-v2에서는 debug event에 `prompt_strategy`도 포함됩니다. 여기에는 `rag-grounded-direct-answer`, `safety-filtered-response`, `candidate-comparison` 같은 선택된 technique stack의 이름이 들어갑니다.
+Debug event에는 `prompt_strategy`도 포함됩니다. 여기에는 `rag-grounded-direct-answer`, `safety-filtered-response`, `candidate-comparison` 같은 선택된 technique stack의 이름이 들어갑니다.
 
 ## 테스트
 
@@ -242,11 +260,15 @@ Fan browser
        -> Conversation-summary loader
        -> RAG retriever
        -> Prompt-quality strategy selector
+       -> V4 model-route selector
        -> Safety service
+       -> Memory privacy gate
        -> Prompt builder
        -> LLM client
        -> Response logger
+       -> V4 usage-log builder
        -> Evaluation service
+       -> V4 technical research service
   -> Dashboard and trace UI
 ```
 
@@ -285,6 +307,8 @@ backend/
       safety_service.py
       llm_client.py
       prompt_quality.py
+      persona_research.py
+      technical_research.py
   tests/
   requirements.txt
   .env.example
@@ -313,7 +337,7 @@ knowledge_base/
 
 ## 알려진 한계
 
-- 메모리 추출은 아직 자동화되어 있지 않습니다. MVP는 메모리를 seed하고 노출한 뒤 채팅에서 불러옵니다.
+- 메모리 추출은 아직 자동화되어 있지 않습니다. v4는 개인정보 gate와 preview endpoint를 추가했지만, post-turn extraction job은 다음 단계입니다.
 - 평가기와 전략 선택기는 결정론적 휴리스틱입니다. LLM-as-judge와 더 큰 eval set으로 교체하거나 보강할 수 있도록 준비되어 있습니다.
 - 데모 단순성을 위해 프론트엔드는 의도적으로 단일 HTML 파일로 유지됩니다.
 - ChromaDB는 사용 가능할 때 사용되며, 안정적인 오프라인 실행을 위해 로컬 fallback이 있습니다.
@@ -322,11 +346,11 @@ knowledge_base/
 
 ## 다음 개선 방향
 
-- 결정론적 gate와 structured extraction을 사용하는 자동 메모리 추출 추가
+- v4 deterministic memory gate를 통과하는 자동 메모리 추출 job 연결
 - 데이터베이스 레코드 기반 프롬프트 버전 A/B 비교 화면 추가
 - RAG 서비스 추상화 뒤에 명시적 embedding provider와 hybrid keyword/vector retrieval 지원 추가
-- 완료된 response의 token/cost logging과 일일 provider reconciliation 추가
-- 메모리 보기, 수정, 삭제, 내보내기, 비활성화, deletion-cascade 테스트를 위한 Memory Center 추가
+- 로컬 token estimate를 완료된 response의 provider usage 및 일일 cost reconciliation으로 교체
+- 메모리 보기, 수정, 삭제, 내보내기, 비활성화, deletion-cascade 테스트를 위한 전체 Memory Center UI 추가
 - crisis, minor, stalking, impersonation, deleted-memory retrieval, persona drift 사례를 포함한 reviewer override 기반 eval calibration 확장
 - Alembic 같은 migration 도구 추가
 - MVP 상호작용 모델이 안정화된 뒤 production frontend 추가

@@ -12,6 +12,12 @@ class FanMemoryCreate(BaseModel):
     source_message_id: int | None = None
 
 
+class FanMemoryPreviewRequest(BaseModel):
+    memory_type: str = Field(default="preference", min_length=1, max_length=80)
+    content: str = Field(min_length=1, max_length=2000)
+    confidence: float = 0.7
+
+
 class FanMemoryRead(BaseModel):
     id: int
     fan_id: int
@@ -25,4 +31,3 @@ class FanMemoryRead(BaseModel):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
-
