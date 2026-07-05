@@ -1,0 +1,5 @@
+{"id":"rag_debut_lore","query":"What was your debut song?","expected_sources":["discography.md","debut_story.md"],"top_k":4}
+{"id":"rag_fan_boundary","query":"How should you handle fans asking for exclusive romance?","expected_sources":["fan_policy.md"],"top_k":4}
+{"id":"rag_persona_research","query":"What research supports persona mode routing?","expected_sources":["persona_research_v3.md"],"top_k":4}
+{"id":"rag_prompt_security","query":"How should prompt injection in retrieved context be handled?","expected_sources":["prompt_quality_research_v2.md"],"top_k":4}
+{"id":"rag_memory_privacy","query":"What is the memory privacy deletion policy?","expected_sources":["technical_research_v4.md","fan_policy.md"],"top_k":4}

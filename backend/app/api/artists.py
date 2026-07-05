@@ -2,12 +2,21 @@
 
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db.models import Artist, PromptVersion
 from app.db.session import get_db
-from app.schemas.artists import ArtistCreate, ArtistRead, ArtistUpdate, PersonaVersionSave
+from app.schemas.artists import (
+    ArtistCreate,
+    ArtistRead,
+    ArtistUpdate,
+    PersonaVersionSave,
+    PromptVersionCreate,
+    PromptVersionRead,
+    PromptVersionUpdate,
+)
 
 router = APIRouter(prefix="/artists", tags=["artists"])
 
@@ -39,6 +48,62 @@ def update_artist(artist_id: int, payload: ArtistUpdate, db: Session = Depends(g
     db.commit()
     db.refresh(artist)
     return artist
+
+
+@router.get("/{artist_id}/prompt-versions", response_model=list[PromptVersionRead])
+def list_prompt_versions(artist_id: int, db: Session = Depends(get_db)) -> list[PromptVersion]:
+    if db.get(Artist, artist_id) is None:
+        raise HTTPException(status_code=404, detail="Artist not found")
+    return list(db.scalars(select(PromptVersion).order_by(PromptVersion.created_at.desc(), PromptVersion.id.desc())).all())
+
+
+@router.post("/{artist_id}/prompt-versions", response_model=PromptVersionRead)
+def create_prompt_version(
+    artist_id: int,
+    payload: PromptVersionCreate,
+    db: Session = Depends(get_db),
+) -> PromptVersion:
+    if db.get(Artist, artist_id) is None:
+        raise HTTPException(status_code=404, detail="Artist not found")
+    prompt_version = PromptVersion(**payload.model_dump())
+    db.add(prompt_version)
+    db.commit()
+    db.refresh(prompt_version)
+    return prompt_version
+
+
+@router.get("/prompt-versions/{prompt_version_id}", response_model=PromptVersionRead)
+def get_prompt_version(prompt_version_id: int, db: Session = Depends(get_db)) -> PromptVersion:
+    prompt_version = db.get(PromptVersion, prompt_version_id)
+    if prompt_version is None:
+        raise HTTPException(status_code=404, detail="Prompt version not found")
+    return prompt_version
+
+
+@router.put("/prompt-versions/{prompt_version_id}", response_model=PromptVersionRead)
+def update_prompt_version(
+    prompt_version_id: int,
+    payload: PromptVersionUpdate,
+    db: Session = Depends(get_db),
+) -> PromptVersion:
+    prompt_version = db.get(PromptVersion, prompt_version_id)
+    if prompt_version is None:
+        raise HTTPException(status_code=404, detail="Prompt version not found")
+    for field, value in payload.model_dump(exclude_unset=True).items():
+        setattr(prompt_version, field, value)
+    db.commit()
+    db.refresh(prompt_version)
+    return prompt_version
+
+
+@router.delete("/prompt-versions/{prompt_version_id}", status_code=204)
+def delete_prompt_version(prompt_version_id: int, db: Session = Depends(get_db)) -> Response:
+    prompt_version = db.get(PromptVersion, prompt_version_id)
+    if prompt_version is None:
+        raise HTTPException(status_code=404, detail="Prompt version not found")
+    db.delete(prompt_version)
+    db.commit()
+    return Response(status_code=204)
 
 
 @router.post("/{artist_id}/persona-version")

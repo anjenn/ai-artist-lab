@@ -1,0 +1,9 @@
+.git
+venv
+backend/.venv
+backend/blue_garage.db
+backend/chroma_db
+__pycache__
+.pytest_cache
+*.pyc
+.env

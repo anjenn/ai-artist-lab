@@ -6,4 +6,4 @@ class ChatStreamRequest(BaseModel):
     fan_id: int = Field(default=1)
     conversation_id: int = Field(default=1)
     message: str = Field(min_length=1, max_length=4000)
-
+    allow_memory_storage: bool = True

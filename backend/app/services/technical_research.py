@@ -65,7 +65,9 @@ REQUEST_LOG_FIELDS = [
     "stream",
     "store",
     "safety_identifier",
+    "latency_ms_first_token",
     "latency_ms_total",
+    "stage_timings",
     "input_tokens",
     "cached_input_tokens",
     "output_tokens",
@@ -198,6 +200,8 @@ def build_request_usage_log(
     fan_memories: list[Any],
     eval_version: str = "fan_eval_v0.4",
     error_code: str | None = None,
+    latency_ms_first_token: int | None = None,
+    stage_timings: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     cost = estimate_usage_cost(model_route, input_tokens, output_tokens)
     response_id = f"response_log:{response_log_id}" if response_log_id is not None else None
@@ -222,8 +226,9 @@ def build_request_usage_log(
         "stream": model_route["stream"],
         "store": model_route["store"],
         "safety_identifier": stable_user_hash(fan_id),
-        "latency_ms_first_token": None,
+        "latency_ms_first_token": latency_ms_first_token,
         "latency_ms_total": latency_ms,
+        "stage_timings": stage_timings or {},
         "input_tokens": input_tokens,
         "cached_input_tokens": 0,
         "output_tokens": output_tokens,

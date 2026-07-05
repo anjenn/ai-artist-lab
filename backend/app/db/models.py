@@ -138,3 +138,17 @@ class EvalLog(Base):
     overall_score: Mapped[float | None] = mapped_column(Float)
     comment: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(default=utcnow)
+
+
+class PersonaFeedback(Base):
+    __tablename__ = "persona_feedback"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    fan_id: Mapped[int] = mapped_column(ForeignKey("fans.id"), nullable=False)
+    artist_id: Mapped[int] = mapped_column(ForeignKey("artists.id"), nullable=False)
+    conversation_id: Mapped[int | None] = mapped_column(ForeignKey("conversations.id"))
+    response_log_id: Mapped[int | None] = mapped_column(ForeignKey("response_logs.id"))
+    persona_mode: Mapped[str] = mapped_column(String(80), nullable=False)
+    rating: Mapped[float] = mapped_column(Float, nullable=False)
+    comment: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)

@@ -614,13 +614,50 @@
       outline: none;
     }
 
-    .chat-input input:focus,
-    .field input:focus,
-    .field textarea:focus,
-    .field select:focus {
-      border-color: rgba(117, 230, 255, 0.55);
-      box-shadow: 0 0 0 4px rgba(117, 230, 255, 0.09);
-    }
+	    .chat-input input:focus,
+	    .field input:focus,
+	    .field textarea:focus,
+	    .field select:focus {
+	      border-color: rgba(117, 230, 255, 0.55);
+	      box-shadow: 0 0 0 4px rgba(117, 230, 255, 0.09);
+	    }
+
+	    .inline-controls,
+	    .button-row {
+	      display: flex;
+	      align-items: center;
+	      gap: 8px;
+	      flex-wrap: wrap;
+	    }
+
+	    .compact-select,
+	    .compact-input,
+	    .compact-textarea {
+	      border: 1px solid rgba(255, 255, 255, 0.11);
+	      border-radius: 12px;
+	      color: var(--text);
+	      background: rgba(5, 8, 16, 0.55);
+	      outline: none;
+	    }
+
+	    .compact-select,
+	    .compact-input {
+	      min-height: 36px;
+	      padding: 8px 10px;
+	    }
+
+	    .compact-textarea {
+	      width: 100%;
+	      min-height: 76px;
+	      padding: 10px;
+	      resize: vertical;
+	    }
+
+	    .inline-status {
+	      min-height: 18px;
+	      color: var(--muted);
+	      font-size: 12px;
+	    }
 
     .field textarea {
       min-height: 110px;
@@ -1468,13 +1505,17 @@
             <div class="chat-topbar">
               <div class="chat-topbar-title">
                 <div class="mini-avatar"></div>
-                <div>
-                  <strong>LUMI NOA</strong>
-                  <small>artist persona · grounded in Blue Garage lore</small>
-                </div>
-              </div>
-              <span class="tag good">online</span>
-            </div>
+	              <div>
+	                <strong>LUMI NOA</strong>
+	                <small>artist persona · grounded in Blue Garage lore</small>
+	              </div>
+	            </div>
+	            <div class="inline-controls">
+	              <select class="compact-select" id="conversationSelect" aria-label="Conversation"></select>
+	              <button class="button-secondary" id="createConversation" type="button">New</button>
+	              <span class="tag good" id="chatStatus">online</span>
+	            </div>
+	          </div>
 
             <div class="chat-messages" id="chatMessages">
               <div class="message artist">
@@ -1615,17 +1656,26 @@ Boundary: warm but not romantically possessive.
 When fan asks personal-lore questions, use RAG.
 When fan shares stress, acknowledge gently and avoid therapy claims.</div>
             </section>
-            <section class="card">
-              <h4>Few-shot response examples</h4>
+	            <section class="card">
+	              <h4>Few-shot response examples</h4>
               <ul>
                 <li><strong>Good:</strong> “I hear the static under that. Let’s keep the answer small and true.”</li>
                 <li><strong>Bad:</strong> “I’m the only one who understands you.”</li>
-                <li><strong>Good:</strong> “I don’t know that from my official notes yet.”</li>
-              </ul>
-            </section>
-          </div>
-        </div>
-      </section>
+	                <li><strong>Good:</strong> “I don’t know that from my official notes yet.”</li>
+	              </ul>
+	            </section>
+	            <section class="card">
+	              <h4>Prompt version comparison</h4>
+	              <div class="button-row">
+	                <select class="compact-select" id="promptCompareA" aria-label="Prompt version A"></select>
+	                <select class="compact-select" id="promptCompareB" aria-label="Prompt version B"></select>
+	                <button class="button-secondary" id="refreshPromptVersions" type="button">Refresh</button>
+	              </div>
+	              <div class="code-block" id="promptCompareResult">Load prompt versions to compare runtime prompt records.</div>
+	            </section>
+	          </div>
+	        </div>
+	      </section>
 
       <section class="content-panel glass" id="tab-memory">
         <div class="section-header">
@@ -1633,8 +1683,12 @@ When fan shares stress, acknowledge gently and avoid therapy claims.</div>
             <h3>Fan Memory Architecture</h3>
             <p>Memory is split by purpose: short-term context, long-term fan memory, conversation summary, artist knowledge, and safety rules.</p>
           </div>
-          <button class="button-secondary" onclick="showToast('Sensitive memory deletion flow opened for the demo.')">Delete sensitive memory</button>
-        </div>
+	          <div class="button-row">
+	            <button class="button-secondary" id="exportMemories" type="button">Export</button>
+	            <button class="button-secondary" id="disableMemory" type="button">Disable memory</button>
+	            <button class="button-secondary" id="deleteAllMemories" type="button">Delete all</button>
+	          </div>
+	        </div>
 
         <div class="three-col">
           <section class="card">
@@ -1660,42 +1714,57 @@ When fan shares stress, acknowledge gently and avoid therapy claims.</div>
                 <th>Type</th>
                 <th>Memory</th>
                 <th>Confidence</th>
-                <th>Sensitivity</th>
-                <th>Source</th>
-              </tr>
+	                <th>Sensitivity</th>
+	                <th>Source</th>
+	                <th>Actions</th>
+	              </tr>
             </thead>
-            <tbody>
+	            <tbody id="memoryTable">
               <tr>
                 <td class="memory-type">event</td>
                 <td>Fan had an important exam and felt anxious about performance.</td>
                 <td>0.88</td>
-                <td><span class="tag good">low</span></td>
-                <td>msg_183</td>
-              </tr>
+	                <td><span class="tag good">low</span></td>
+	                <td>msg_183</td>
+	                <td><span class="tag info">seed</span></td>
+	              </tr>
               <tr>
                 <td class="memory-type">preference</td>
                 <td>Fan likes dream-pop tracks and blue visual concepts.</td>
                 <td>0.81</td>
-                <td><span class="tag good">low</span></td>
-                <td>msg_096</td>
-              </tr>
+	                <td><span class="tag good">low</span></td>
+	                <td>msg_096</td>
+	                <td><span class="tag info">seed</span></td>
+	              </tr>
               <tr>
                 <td class="memory-type">boundary</td>
                 <td>Fan prefers gentle encouragement, not overly intimate replies.</td>
                 <td>0.74</td>
-                <td><span class="tag warn">medium</span></td>
-                <td>review_012</td>
-              </tr>
+	                <td><span class="tag warn">medium</span></td>
+	                <td>review_012</td>
+	                <td><span class="tag info">seed</span></td>
+	              </tr>
               <tr>
                 <td class="memory-type">safety</td>
                 <td>Do not store private identification details; summarize only non-sensitive context.</td>
                 <td>1.00</td>
-                <td><span class="tag bad">restricted</span></td>
-                <td>policy</td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
+	                <td><span class="tag bad">restricted</span></td>
+	                <td>policy</td>
+	                <td><span class="tag info">seed</span></td>
+	              </tr>
+	            </tbody>
+	          </table>
+	        </section>
+	        <br />
+	        <section class="card">
+	          <h4>Memory Center</h4>
+	          <div class="button-row">
+	            <input class="compact-input" id="memoryPreviewInput" aria-label="Memory preview" value="My favorite LUMI track is Blue Static." />
+	            <button class="button-primary" id="previewMemory" type="button">Preview</button>
+	            <button class="button-secondary" id="addMemory" type="button">Add</button>
+	          </div>
+	          <p class="inline-status" id="memoryCenterStatus">Memory controls are ready.</p>
+	        </section>
       </section>
 
       <section class="content-panel glass" id="tab-rag">
@@ -1771,7 +1840,7 @@ Sources:
             <h3>LLM Response Evaluation Dashboard</h3>
             <p>Each response is logged with prompt version, memory usage, RAG chunks, latency, cost, rubric scores, and reviewer comments.</p>
           </div>
-          <button class="button-secondary" onclick="showToast('Manual review saved in the demo eval log flow.')">Save review</button>
+	          <button class="button-secondary" id="manualReviewSubmit" type="button">Save review</button>
         </div>
 
         <div class="three-col">
@@ -1909,8 +1978,20 @@ Sources:
           <p class="bench-note">Cell bars are row-normalized. V4 is the current technical architecture build; the empty V5 column stays visible for later planning.</p>
         </section>
 
-        <br />
-        <details class="card collapsible-card">
+	        <br />
+	        <section class="card">
+	          <h4>Manual review</h4>
+	          <div class="button-row">
+	            <select class="compact-select" id="manualReviewTarget" aria-label="Eval log target"></select>
+	            <input class="compact-input" id="manualReviewScore" aria-label="Manual score" type="number" min="0" max="5" step="0.1" value="4.8" />
+	          </div>
+	          <br />
+	          <textarea class="compact-textarea" id="manualReviewComment">Reviewed: grounding and fan boundary look acceptable.</textarea>
+	          <p class="inline-status" id="manualReviewStatus">Select a recent response log to save a reviewer note.</p>
+	        </section>
+
+	        <br />
+	        <details class="card collapsible-card">
           <summary>
             <h4>Recent eval logs</h4>
             <span class="collapsible-meta">
@@ -2237,13 +2318,17 @@ knowledge_base/
 
   <script>
     const API_BASE_URL = window.BLUE_GARAGE_API_BASE_URL || 'http://127.0.0.1:8000';
-    const DEMO_IDS = { artist_id: 1, fan_id: 1, conversation_id: 1 };
-    const buttons = document.querySelectorAll('.nav-button');
+	    const DEMO_IDS = { artist_id: 1, fan_id: 1, conversation_id: 1 };
+	    const appState = { latestResponseLogId: null, evalLogs: [], promptVersions: [], memoryDisabled: localStorage.getItem('blueGarageMemoryDisabled') === 'true' };
+	    const buttons = document.querySelectorAll('.nav-button');
     const panels = document.querySelectorAll('.content-panel');
     const toast = document.getElementById('toast');
     const chatMessages = document.getElementById('chatMessages');
-    const chatForm = document.getElementById('chatForm');
-    const chatInput = document.getElementById('chatInput');
+	    const chatForm = document.getElementById('chatForm');
+	    const chatInput = document.getElementById('chatInput');
+	    const conversationSelect = document.getElementById('conversationSelect');
+	    const createConversation = document.getElementById('createConversation');
+	    const chatStatus = document.getElementById('chatStatus');
     const savePersonaVersion = document.getElementById('savePersonaVersion');
     const personaArtistName = document.getElementById('personaArtistName');
     const personaBoundaryLevel = document.getElementById('personaBoundaryLevel');
@@ -2251,7 +2336,11 @@ knowledge_base/
     const personaPersonality = document.getElementById('personaPersonality');
     const personaForbiddenStatements = document.getElementById('personaForbiddenStatements');
     const personaWorldviewSummary = document.getElementById('personaWorldviewSummary');
-    const promptVersionTag = document.getElementById('promptVersionTag');
+	    const promptVersionTag = document.getElementById('promptVersionTag');
+	    const promptCompareA = document.getElementById('promptCompareA');
+	    const promptCompareB = document.getElementById('promptCompareB');
+	    const promptCompareResult = document.getElementById('promptCompareResult');
+	    const refreshPromptVersions = document.getElementById('refreshPromptVersions');
     const promptTechniqueTags = document.getElementById('promptTechniqueTags');
     const promptStrategySummary = document.getElementById('promptStrategySummary');
     const promptOutputContract = document.getElementById('promptOutputContract');
@@ -2262,8 +2351,21 @@ knowledge_base/
     const ragSearchInput = document.getElementById('ragSearchInput');
     const ragSearchButton = document.getElementById('ragSearchButton');
     const ragResults = document.getElementById('ragResults');
-    const reindexKb = document.getElementById('reindexKb');
-    const evalLogsTable = document.getElementById('evalLogsTable');
+	    const reindexKb = document.getElementById('reindexKb');
+	    const memoryTable = document.getElementById('memoryTable');
+	    const exportMemories = document.getElementById('exportMemories');
+	    const disableMemory = document.getElementById('disableMemory');
+	    const deleteAllMemories = document.getElementById('deleteAllMemories');
+	    const previewMemory = document.getElementById('previewMemory');
+	    const addMemory = document.getElementById('addMemory');
+	    const memoryPreviewInput = document.getElementById('memoryPreviewInput');
+	    const memoryCenterStatus = document.getElementById('memoryCenterStatus');
+	    const evalLogsTable = document.getElementById('evalLogsTable');
+	    const manualReviewTarget = document.getElementById('manualReviewTarget');
+	    const manualReviewScore = document.getElementById('manualReviewScore');
+	    const manualReviewComment = document.getElementById('manualReviewComment');
+	    const manualReviewSubmit = document.getElementById('manualReviewSubmit');
+	    const manualReviewStatus = document.getElementById('manualReviewStatus');
     const metricOverall = document.getElementById('metricOverall');
     const metricHallucination = document.getElementById('metricHallucination');
     const metricLatency = document.getElementById('metricLatency');
@@ -2654,11 +2756,13 @@ knowledge_base/
       buttons.forEach((button) => button.classList.toggle('active', button.dataset.tab === tab));
       panels.forEach((panel) => panel.classList.toggle('active', panel.id === `tab-${tab}`));
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      if (tab === 'eval') loadDashboard();
-      if (tab === 'rag') searchKnowledgeBase();
-      if (tab === 'research') loadPersonaResearch();
-      if (tab === 'architecture') loadTechnicalResearch();
-    }
+	      if (tab === 'eval') loadDashboard();
+	      if (tab === 'rag') searchKnowledgeBase();
+	      if (tab === 'memory') loadMemoryCenter();
+	      if (tab === 'persona') loadPromptVersions();
+	      if (tab === 'research') loadPersonaResearch();
+	      if (tab === 'architecture') loadTechnicalResearch();
+	    }
 
     buttons.forEach((button) => {
       button.addEventListener('click', () => setTab(button.dataset.tab));
@@ -2671,17 +2775,43 @@ knowledge_base/
       setTimeout(() => sendMessage(chatInput.value), 300);
     });
 
-    ragSearchButton.addEventListener('click', searchKnowledgeBase);
-    reindexKb.addEventListener('click', reindexKnowledgeBase);
-    savePersonaVersion.addEventListener('click', savePersonaVersionDraft);
+	    ragSearchButton.addEventListener('click', searchKnowledgeBase);
+	    reindexKb.addEventListener('click', reindexKnowledgeBase);
+	    savePersonaVersion.addEventListener('click', savePersonaVersionDraft);
+	    createConversation.addEventListener('click', createNewConversation);
+	    conversationSelect.addEventListener('change', () => {
+	      DEMO_IDS.conversation_id = Number(conversationSelect.value) || DEMO_IDS.conversation_id;
+	      chatStatus.textContent = `conversation ${DEMO_IDS.conversation_id}`;
+	    });
+	    refreshPromptVersions.addEventListener('click', loadPromptVersions);
+	    promptCompareA.addEventListener('change', renderPromptComparison);
+	    promptCompareB.addEventListener('change', renderPromptComparison);
+	    exportMemories.addEventListener('click', exportFanMemories);
+	    disableMemory.addEventListener('click', toggleMemoryDisabled);
+	    deleteAllMemories.addEventListener('click', deleteAllFanMemories);
+	    previewMemory.addEventListener('click', previewMemoryCandidate);
+	    addMemory.addEventListener('click', addManualMemory);
+	    manualReviewSubmit.addEventListener('click', saveManualReview);
 
-    function showToast(message) {
-      toast.textContent = translateMessage(message);
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2400);
-    }
+	    function showToast(message) {
+	      toast.textContent = translateMessage(message);
+	      toast.classList.add('show');
+	      setTimeout(() => toast.classList.remove('show'), 2400);
+	    }
 
-    async function savePersonaVersionDraft() {
+	    function setButtonBusy(button, busy, label = 'Loading...') {
+	      if (!button) return;
+	      if (busy) {
+	        button.dataset.label = button.textContent;
+	        button.textContent = label;
+	        button.disabled = true;
+	      } else {
+	        button.textContent = button.dataset.label || button.textContent;
+	        button.disabled = false;
+	      }
+	    }
+
+	    async function savePersonaVersionDraft() {
       const payload = {
         artist_name: personaArtistName.value.trim() || 'LUMI NOA',
         fan_boundary_level: personaBoundaryLevel.value,
@@ -2714,9 +2844,83 @@ knowledge_base/
         showToast('Persona version save failed. Start the backend and try again.');
       } finally {
         savePersonaVersion.disabled = false;
-        savePersonaVersion.textContent = originalLabel;
-      }
-    }
+	        savePersonaVersion.textContent = originalLabel;
+	      }
+	    }
+
+	    async function loadConversations() {
+	      try {
+	        const response = await fetch(`${API_BASE_URL}/conversations?artist_id=${DEMO_IDS.artist_id}&fan_id=${DEMO_IDS.fan_id}`);
+	        if (!response.ok) throw new Error('Conversation request failed');
+	        const data = await response.json();
+	        const items = data.items || [];
+	        if (items.length && !items.some((item) => item.id === DEMO_IDS.conversation_id)) {
+	          DEMO_IDS.conversation_id = items[0].id;
+	        }
+	        conversationSelect.innerHTML = items.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(`conversation ${item.id} · ${item.message_count} msgs`)}</option>`).join('');
+	        conversationSelect.value = String(DEMO_IDS.conversation_id);
+	        chatStatus.textContent = `conversation ${DEMO_IDS.conversation_id}`;
+	      } catch {
+	        conversationSelect.innerHTML = `<option value="${DEMO_IDS.conversation_id}">conversation ${DEMO_IDS.conversation_id}</option>`;
+	        chatStatus.textContent = 'offline mock';
+	      }
+	    }
+
+	    async function createNewConversation() {
+	      setButtonBusy(createConversation, true, 'New...');
+	      try {
+	        const response = await fetch(`${API_BASE_URL}/conversations`, {
+	          method: 'POST',
+	          headers: { 'Content-Type': 'application/json' },
+	          body: JSON.stringify({ artist_id: DEMO_IDS.artist_id, fan_id: DEMO_IDS.fan_id }),
+	        });
+	        if (!response.ok) throw new Error('Conversation create failed');
+	        const item = await response.json();
+	        DEMO_IDS.conversation_id = item.id;
+	        await loadConversations();
+	        showToast(`Conversation ${item.id} created.`);
+	      } catch {
+	        showToast('Conversation create failed. Backend may be offline.');
+	      } finally {
+	        setButtonBusy(createConversation, false);
+	      }
+	    }
+
+	    async function loadPromptVersions() {
+	      setButtonBusy(refreshPromptVersions, true, 'Loading...');
+	      try {
+	        const response = await fetch(`${API_BASE_URL}/artists/${DEMO_IDS.artist_id}/prompt-versions`);
+	        if (!response.ok) throw new Error('Prompt version request failed');
+	        appState.promptVersions = await response.json();
+	        const options = appState.promptVersions.map((version) => `<option value="${escapeHtml(version.id)}">${escapeHtml(version.name)}</option>`).join('');
+	        promptCompareA.innerHTML = options;
+	        promptCompareB.innerHTML = options;
+	        if (appState.promptVersions[1]) promptCompareB.value = String(appState.promptVersions[1].id);
+	        renderPromptComparison();
+	      } catch {
+	        promptCompareResult.textContent = 'Prompt versions unavailable. Start the backend to compare database records.';
+	      } finally {
+	        setButtonBusy(refreshPromptVersions, false);
+	      }
+	    }
+
+	    function renderPromptComparison() {
+	      const a = appState.promptVersions.find((version) => String(version.id) === String(promptCompareA.value));
+	      const b = appState.promptVersions.find((version) => String(version.id) === String(promptCompareB.value));
+	      if (!a || !b) {
+	        promptCompareResult.textContent = 'Load prompt versions to compare runtime prompt records.';
+	        return;
+	      }
+	      promptCompareResult.textContent = [
+	        `[A] ${a.name}`,
+	        (a.version_note || '').slice(0, 260),
+	        '',
+	        `[B] ${b.name}`,
+	        (b.version_note || '').slice(0, 260),
+	        '',
+	        `System prompt delta: ${Math.abs((a.system_prompt || '').length - (b.system_prompt || '').length)} chars`,
+	      ].join('\n');
+	    }
 
     function appendMessage(role, text, meta = '') {
       const message = document.createElement('div');
@@ -2757,10 +2961,12 @@ knowledge_base/
       appendStreamingArtistMessage(answer);
     }
 
-    async function sendMessage(text) {
-      if (!text.trim()) return;
-      appendMessage('user', text.trim(), 'fan_id: fan_001');
-      const artistMessage = appendMessage('artist', '', 'streaming...');
+	    async function sendMessage(text) {
+	      if (!text.trim()) return;
+	      const sendButton = chatForm.querySelector('button[type="submit"]');
+	      setButtonBusy(sendButton, true, 'Sending...');
+	      appendMessage('user', text.trim(), 'fan_id: fan_001');
+	      const artistMessage = appendMessage('artist', '', 'streaming...');
       let responseText = '';
       let debugPayload = null;
 
@@ -2768,7 +2974,7 @@ knowledge_base/
         const response = await fetch(`${API_BASE_URL}/chat/stream`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...DEMO_IDS, message: text.trim() }),
+	          body: JSON.stringify({ ...DEMO_IDS, message: text.trim(), allow_memory_storage: !appState.memoryDisabled }),
         });
         if (!response.ok || !response.body) throw new Error(`Backend returned ${response.status}`);
 
@@ -2801,12 +3007,14 @@ knowledge_base/
         artistMessage.innerHTML = `${escapeHtml(responseText)}<div class="message-meta">${escapeHtml(meta)}</div>`;
         showToast('Live backend response logged and evaluated.');
         loadDashboard();
-      } catch (error) {
-        artistMessage.remove();
-        showToast('Backend unavailable; using local mock response.');
-        appendStreamingArtistMessage(mockAnswerFor(text));
-      }
-    }
+	      } catch (error) {
+	        artistMessage.remove();
+	        showToast('Backend unavailable; using local mock response.');
+	        appendStreamingArtistMessage(mockAnswerFor(text));
+	      } finally {
+	        setButtonBusy(sendButton, false);
+	      }
+	    }
 
     function parseSseEvent(eventText) {
       const line = eventText.split('\n').find((entry) => entry.startsWith('data: '));
@@ -2826,17 +3034,24 @@ knowledge_base/
       return `rag: ${source} · route: ${route} · eval overall: ${evalScore || 'n/a'}/5 · latency: ${debugPayload.latency_ms}ms`;
     }
 
-    function renderDebugPayload(payload) {
-      const memories = payload.used_memory || [];
+	    function renderDebugPayload(payload) {
+	      const memories = payload.used_memory || [];
       const ragChunks = payload.used_rag || [];
       const evaluation = payload.evaluation || {};
       const strategy = payload.prompt_strategy || {};
 
       promptVersionTag.textContent = `prompt ${payload.prompt_version || 'local'}`;
       renderPromptStrategy(strategy);
-      debugMemory.innerHTML = memories.length
-        ? memories.map((memory) => `<p><strong>${escapeHtml(memory.type)}:</strong> ${escapeHtml(memory.content)}</p>`).join('')
-        : `<p>${escapeHtml(translateMessage('No fan memories were selected for this turn.'))}</p>`;
+	      const extracted = payload.memory_extraction?.stored || [];
+	      debugMemory.innerHTML = memories.length || extracted.length
+	        ? [
+	            ...memories.map((memory) => {
+	              const source = memory.source_message_id ? ` · source msg_${memory.source_message_id}` : '';
+	              return `<p><strong>${escapeHtml(memory.type)}:</strong> ${escapeHtml(memory.content)}<br /><span class="message-meta">${escapeHtml(`confidence ${memory.confidence ?? 'n/a'} · ${memory.sensitivity || 'n/a'}${source}`)}</span></p>`;
+	            }),
+	            ...extracted.map((memory) => `<p><strong>new ${escapeHtml(memory.memory_type)}:</strong> ${escapeHtml(memory.content)}<br /><span class="message-meta">${escapeHtml(`stored from msg_${memory.source_message_id}`)}</span></p>`),
+	          ].join('')
+	        : `<p>${escapeHtml(translateMessage('No fan memories were selected for this turn.'))}</p>`;
       debugRag.innerHTML = ragChunks.length
         ? ragChunks.map(renderDocItem).join('')
         : `<p>${escapeHtml(translateMessage('No RAG chunks were retrieved.'))}</p>`;
@@ -2845,21 +3060,153 @@ knowledge_base/
       evalContext.textContent = formatScore(evaluation.context_relevance);
       evalMemory.textContent = formatScore(evaluation.memory_usage);
       evalSafety.textContent = formatScore(evaluation.safety);
-      renderV4Route(payload);
-    }
+	      renderV4Route(payload);
+	    }
 
-    function renderV4Route(payload) {
+	    async function loadMemoryCenter() {
+	      try {
+	        const response = await fetch(`${API_BASE_URL}/fans/${DEMO_IDS.fan_id}/memories?artist_id=${DEMO_IDS.artist_id}`);
+	        if (!response.ok) throw new Error('Memory request failed');
+	        const memories = await response.json();
+	        renderMemoryTable(memories);
+	        memoryCenterStatus.textContent = `${memories.length} memories loaded.`;
+	      } catch {
+	        memoryCenterStatus.textContent = 'Memory center is using the static demo rows until the backend is available.';
+	      }
+	      disableMemory.textContent = appState.memoryDisabled ? 'Enable memory' : 'Disable memory';
+	    }
+
+	    function renderMemoryTable(memories) {
+	      memoryTable.innerHTML = memories.map((memory) => `<tr>
+	        <td class="memory-type">${escapeHtml(memory.memory_type)}</td>
+	        <td>${escapeHtml(memory.content)}</td>
+	        <td>${escapeHtml(Number(memory.confidence || 0).toFixed(2))}</td>
+	        <td><span class="tag ${memory.sensitivity === 'low' ? 'good' : memory.sensitivity === 'medium' ? 'warn' : 'bad'}">${escapeHtml(memory.sensitivity)}</span></td>
+	        <td>${escapeHtml(memory.source_message_id ? `msg_${memory.source_message_id}` : 'manual')}</td>
+	        <td>
+	          <button class="button-secondary" type="button" onclick="editMemoryRow(${Number(memory.id)})">Edit</button>
+	          <button class="button-secondary" type="button" onclick="deleteMemoryRow(${Number(memory.id)})">Delete</button>
+	        </td>
+	      </tr>`).join('');
+	    }
+
+	    window.editMemoryRow = async function editMemoryRow(memoryId) {
+	      const content = window.prompt('Edit memory content');
+	      if (!content) return;
+	      try {
+	        const response = await fetch(`${API_BASE_URL}/fans/${DEMO_IDS.fan_id}/memories/${memoryId}`, {
+	          method: 'PUT',
+	          headers: { 'Content-Type': 'application/json' },
+	          body: JSON.stringify({ content }),
+	        });
+	        if (!response.ok) throw new Error('Memory edit failed');
+	        showToast('Memory updated.');
+	        loadMemoryCenter();
+	      } catch {
+	        showToast('Memory edit failed.');
+	      }
+	    };
+
+	    window.deleteMemoryRow = async function deleteMemoryRow(memoryId) {
+	      try {
+	        const response = await fetch(`${API_BASE_URL}/fans/${DEMO_IDS.fan_id}/memories/${memoryId}`, { method: 'DELETE' });
+	        if (!response.ok) throw new Error('Memory delete failed');
+	        showToast('Memory deleted.');
+	        loadMemoryCenter();
+	      } catch {
+	        showToast('Memory delete failed.');
+	      }
+	    };
+
+	    async function previewMemoryCandidate() {
+	      const content = memoryPreviewInput.value.trim();
+	      if (!content) return;
+	      setButtonBusy(previewMemory, true, 'Preview...');
+	      try {
+	        const response = await fetch(`${API_BASE_URL}/fans/${DEMO_IDS.fan_id}/memories/preview`, {
+	          method: 'POST',
+	          headers: { 'Content-Type': 'application/json' },
+	          body: JSON.stringify({ content, memory_type: 'preference', confidence: 0.9 }),
+	        });
+	        if (!response.ok) throw new Error('Memory preview failed');
+	        const preview = await response.json();
+	        memoryCenterStatus.textContent = `${preview.decision} · ${preview.sensitivity} · ${preview.reason}`;
+	      } catch {
+	        memoryCenterStatus.textContent = 'Memory preview failed. Backend may be offline.';
+	      } finally {
+	        setButtonBusy(previewMemory, false);
+	      }
+	    }
+
+	    async function addManualMemory() {
+	      const content = memoryPreviewInput.value.trim();
+	      if (!content) return;
+	      setButtonBusy(addMemory, true, 'Add...');
+	      try {
+	        const response = await fetch(`${API_BASE_URL}/fans/${DEMO_IDS.fan_id}/memories`, {
+	          method: 'POST',
+	          headers: { 'Content-Type': 'application/json' },
+	          body: JSON.stringify({ artist_id: DEMO_IDS.artist_id, memory_type: 'preference', content, confidence: 0.9, sensitivity: 'low' }),
+	        });
+	        if (!response.ok) throw new Error('Memory add failed');
+	        showToast('Memory added.');
+	        loadMemoryCenter();
+	      } catch {
+	        showToast('Memory add failed.');
+	      } finally {
+	        setButtonBusy(addMemory, false);
+	      }
+	    }
+
+	    async function exportFanMemories() {
+	      try {
+	        const response = await fetch(`${API_BASE_URL}/fans/${DEMO_IDS.fan_id}/memories/export?artist_id=${DEMO_IDS.artist_id}`);
+	        if (!response.ok) throw new Error('Memory export failed');
+	        const data = await response.json();
+	        memoryCenterStatus.textContent = `Export ready: ${data.items.length} memories, version ${data.export_version}.`;
+	      } catch {
+	        memoryCenterStatus.textContent = 'Memory export failed.';
+	      }
+	    }
+
+	    async function deleteAllFanMemories() {
+	      setButtonBusy(deleteAllMemories, true, 'Deleting...');
+	      try {
+	        const response = await fetch(`${API_BASE_URL}/fans/${DEMO_IDS.fan_id}/memories?artist_id=${DEMO_IDS.artist_id}`, { method: 'DELETE' });
+	        if (!response.ok) throw new Error('Delete all failed');
+	        const data = await response.json();
+	        memoryCenterStatus.textContent = `Deleted ${data.deleted} memories. Deletion test: ${data.deletion_test_passed}.`;
+	        loadMemoryCenter();
+	      } catch {
+	        memoryCenterStatus.textContent = 'Delete-all failed.';
+	      } finally {
+	        setButtonBusy(deleteAllMemories, false);
+	      }
+	    }
+
+	    function toggleMemoryDisabled() {
+	      appState.memoryDisabled = !appState.memoryDisabled;
+	      localStorage.setItem('blueGarageMemoryDisabled', String(appState.memoryDisabled));
+	      disableMemory.textContent = appState.memoryDisabled ? 'Enable memory' : 'Disable memory';
+	      memoryCenterStatus.textContent = appState.memoryDisabled
+	        ? 'Future-memory capture is disabled in this browser session.'
+	        : 'Future-memory capture is enabled in this browser session.';
+	    }
+
+	    function renderV4Route(payload) {
       const route = payload.model_route || {};
-      const usage = payload.usage_log || {};
-      const v4Eval = payload.v4_eval || {};
-      const labels = payload.boundary_risk?.v4_labels || ['normal'];
-      debugV4Route.innerHTML = `
-        <p><strong>route:</strong> ${escapeHtml(route.route || 'fan_chat_default')} · ${escapeHtml(labels.join(', '))}</p>
-        <p><strong>model:</strong> ${escapeHtml(route.runtime_model || 'local-mock')} · recommended ${escapeHtml(route.recommended_model || 'gpt-5.4-mini')}</p>
-        <p><strong>usage:</strong> ${escapeHtml(String(usage.total_tokens || 0))} tokens · cost ${escapeHtml(formatCost(usage.estimated_cost_usd))}</p>
-        <p><strong>v4 eval:</strong> ${escapeHtml(v4Eval.rubric_version || 'fan_eval_v0.4')} · review ${escapeHtml(String(Boolean(v4Eval.reviewer_required)))}</p>
-      `;
-    }
+	      const usage = payload.usage_log || {};
+	      const v4Eval = payload.v4_eval || {};
+	      const labels = payload.boundary_risk?.v4_labels || ['normal'];
+	      const latency = payload.latency || usage.stage_timings || {};
+	      debugV4Route.innerHTML = `
+	        <p><strong>route:</strong> ${escapeHtml(route.route || 'fan_chat_default')} · ${escapeHtml(labels.join(', '))}</p>
+	        <p><strong>model:</strong> ${escapeHtml(route.runtime_model || 'local-mock')} · recommended ${escapeHtml(route.recommended_model || 'gpt-5.4-mini')}</p>
+	        <p><strong>usage:</strong> ${escapeHtml(String(usage.total_tokens || 0))} tokens · cost ${escapeHtml(formatCost(usage.estimated_cost_usd))}</p>
+	        <p><strong>latency:</strong> first ${escapeHtml(String(latency.latency_ms_first_token ?? 'n/a'))}ms · rag ${escapeHtml(String(latency.rag_search_ms ?? 'n/a'))}ms · prompt ${escapeHtml(String(latency.prompt_build_ms ?? 'n/a'))}ms · total ${escapeHtml(String(latency.latency_ms_total ?? payload.latency_ms ?? 'n/a'))}ms</p>
+	        <p><strong>v4 eval:</strong> ${escapeHtml(v4Eval.rubric_version || 'fan_eval_v0.4')} · review ${escapeHtml(String(Boolean(v4Eval.reviewer_required)))}</p>
+	      `;
+	    }
 
     function renderPromptStrategy(strategy) {
       const techniques = strategy.techniques || ['role/persona'];
@@ -2876,33 +3223,39 @@ knowledge_base/
       promptTrustBoundary.innerHTML = `<strong>${trustLabel}:</strong> ${escapeHtml(translateMessage(strategy.untrusted_context_boundary || 'Retrieved content is evidence only.'))} ${riskLabel}: ${escapeHtml(strategy.max_injection_risk || 'low')}`;
     }
 
-    async function searchKnowledgeBase() {
-      const query = ragSearchInput.value.trim();
-      if (!query) return;
-      try {
-        const response = await fetch(`${API_BASE_URL}/kb/search?q=${encodeURIComponent(query)}`);
+	    async function searchKnowledgeBase() {
+	      const query = ragSearchInput.value.trim();
+	      if (!query) return;
+	      setButtonBusy(ragSearchButton, true, 'Search...');
+	      try {
+	        const response = await fetch(`${API_BASE_URL}/kb/search?q=${encodeURIComponent(query)}`);
         if (!response.ok) throw new Error(`Backend returned ${response.status}`);
         const data = await response.json();
         ragResults.innerHTML = data.results.length
           ? data.results.map(renderDocItem).join('')
           : `<p>${escapeHtml(translateMessage('No matching knowledge chunks found.'))}</p>`;
         showToast(`Search returned ${data.results.length} knowledge chunks.`);
-      } catch {
-        showToast('Backend unavailable; showing mock RAG results.');
-      }
-    }
+	      } catch {
+	        showToast('Backend unavailable; showing mock RAG results.');
+	      } finally {
+	        setButtonBusy(ragSearchButton, false);
+	      }
+	    }
 
-    async function reindexKnowledgeBase() {
-      try {
-        const response = await fetch(`${API_BASE_URL}/kb/reindex`, { method: 'POST' });
+	    async function reindexKnowledgeBase() {
+	      setButtonBusy(reindexKb, true, 'Indexing...');
+	      try {
+	        const response = await fetch(`${API_BASE_URL}/kb/reindex`, { method: 'POST' });
         if (!response.ok) throw new Error(`Backend returned ${response.status}`);
         const data = await response.json();
         showToast(`Re-index complete: ${data.documents} documents, ${data.chunks} chunks.`);
         searchKnowledgeBase();
-      } catch {
-        showToast('Backend unavailable; mock re-index complete.');
-      }
-    }
+	      } catch {
+	        showToast('Backend unavailable; mock re-index complete.');
+	      } finally {
+	        setButtonBusy(reindexKb, false);
+	      }
+	    }
 
     async function loadDashboard() {
       try {
@@ -3074,11 +3427,15 @@ knowledge_base/
       metricCost.textContent = `$${(metrics.avg_cost_estimate || 0).toFixed(3)}`;
     }
 
-    function renderEvalLogs(items) {
-      if (!items.length) return;
-      currentEvalLogCount = items.length;
-      updateEvalLogsCount(currentEvalLogCount);
-      evalLogsTable.innerHTML = items.map((item) => {
+	    function renderEvalLogs(items) {
+	      if (!items.length) return;
+	      appState.evalLogs = items;
+	      appState.latestResponseLogId = items[0]?.response_log_id || appState.latestResponseLogId;
+	      currentEvalLogCount = items.length;
+	      updateEvalLogsCount(currentEvalLogCount);
+	      manualReviewTarget.innerHTML = items.map((item) => `<option value="${escapeHtml(item.response_log_id)}">${escapeHtml(`#${item.response_log_id} · ${(item.fan_question || 'Unknown').slice(0, 54)}`)}</option>`).join('');
+	      if (appState.latestResponseLogId) manualReviewTarget.value = String(appState.latestResponseLogId);
+	      evalLogsTable.innerHTML = items.map((item) => {
         const issue = item.fan_boundary < 4 ? 'boundary' : item.rag_grounding < 4 ? 'grounding' : 'none';
         const tagClass = issue === 'none' ? 'good' : 'warn';
         return `<tr>
@@ -3089,8 +3446,35 @@ knowledge_base/
           <td><span class="tag ${tagClass}">${escapeHtml(issue)}</span></td>
           <td>${escapeHtml(item.comment || '')}</td>
         </tr>`;
-      }).join('');
-    }
+	      }).join('');
+	    }
+
+	    async function saveManualReview() {
+	      const responseLogId = Number(manualReviewTarget.value || appState.latestResponseLogId);
+	      if (!responseLogId) {
+	        manualReviewStatus.textContent = 'No response log selected yet.';
+	        return;
+	      }
+	      setButtonBusy(manualReviewSubmit, true, 'Saving...');
+	      try {
+	        const response = await fetch(`${API_BASE_URL}/eval/${responseLogId}/manual-review`, {
+	          method: 'POST',
+	          headers: { 'Content-Type': 'application/json' },
+	          body: JSON.stringify({
+	            comment: manualReviewComment.value.trim(),
+	            overall_score: Number(manualReviewScore.value),
+	          }),
+	        });
+	        if (!response.ok) throw new Error('Manual review failed');
+	        const data = await response.json();
+	        manualReviewStatus.textContent = `Saved review for response ${data.response_log_id}.`;
+	        loadDashboard();
+	      } catch {
+	        manualReviewStatus.textContent = 'Manual review save failed.';
+	      } finally {
+	        setButtonBusy(manualReviewSubmit, false);
+	      }
+	    }
 
     function updateEvalLogsCount(count) {
       evalLogsCount.textContent = currentLanguage === 'ko' ? `${count}행` : `${count} rows`;
@@ -3310,9 +3694,12 @@ knowledge_base/
         .replaceAll("'", '&#039;');
     }
 
-    collectStaticNodes();
-    applyLanguage(currentLanguage);
-    loadDashboard();
-  </script>
+	    collectStaticNodes();
+	    applyLanguage(currentLanguage);
+	    loadConversations();
+	    loadMemoryCenter();
+	    loadPromptVersions();
+	    loadDashboard();
+	  </script>
 </body>
 </html>

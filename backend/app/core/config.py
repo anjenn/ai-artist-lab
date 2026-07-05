@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     database_url: str = Field(default="sqlite:///./blue_garage.db", alias="DATABASE_URL")
     chroma_path: str = Field(default="./chroma_db", alias="CHROMA_PATH")
     app_env: str = Field(default="local", alias="APP_ENV")
+    demo_access_key: str | None = Field(default=None, alias="DEMO_ACCESS_KEY")
+    embedding_provider: str = Field(default="hash", alias="EMBEDDING_PROVIDER")
+    openai_embedding_model: str = Field(default="text-embedding-3-small", alias="OPENAI_EMBEDDING_MODEL")
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -24,4 +27,3 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-

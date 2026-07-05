@@ -11,7 +11,15 @@ def test_prompt_includes_required_context_sections():
         fan_boundary_level="Warm distance",
     )
     rules = [SimpleNamespace(rule_type="lore", content="Do not invent official lore.")]
-    memories = [SimpleNamespace(memory_type="event", content="Fan had an important exam.", confidence=0.9, sensitivity="low")]
+    memories = [
+        SimpleNamespace(
+            memory_type="event",
+            content="Fan had an important exam.",
+            confidence=0.9,
+            sensitivity="low",
+            source_message_id=183,
+        )
+    ]
     summary = SimpleNamespace(summary="Fan previously talked about exam stress.")
     recent = [SimpleNamespace(role="user", content="Remember my exam?")]
     rag_chunks = [{"source": "discography.md", "chunk_id": "chunk_01", "content": "Blue Static is the debut song."}]
@@ -51,3 +59,4 @@ def test_prompt_includes_required_context_sections():
     assert "fan_id" not in messages[-1]["content"].lower()
     assert debug["prompt_version"] == "v0.3"
     assert debug["prompt_strategy"]["name"] == "rag-grounded-direct-answer"
+    assert debug["used_memory"][0]["source_message_id"] == 183

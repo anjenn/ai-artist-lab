@@ -18,6 +18,13 @@ class FanMemoryPreviewRequest(BaseModel):
     confidence: float = 0.7
 
 
+class FanMemoryUpdate(BaseModel):
+    memory_type: str | None = Field(default=None, min_length=1, max_length=80)
+    content: str | None = Field(default=None, min_length=1, max_length=2000)
+    confidence: float | None = None
+    sensitivity: str | None = None
+
+
 class FanMemoryRead(BaseModel):
     id: int
     fan_id: int

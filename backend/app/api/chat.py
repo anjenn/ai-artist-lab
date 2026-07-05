@@ -19,6 +19,7 @@ from app.services.eval_service import evaluate_response
 from app.services.eval_service import evaluate_v4_gates
 from app.services.llm_client import LLMClient
 from app.services.memory_service import (
+    auto_extract_and_store_memories,
     load_conversation_summary,
     load_fan_memories,
     load_recent_messages,
@@ -40,20 +41,34 @@ def _sse(event: dict) -> str:
 
 @router.post("/stream")
 async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db)) -> StreamingResponse:
+    request_started = time.perf_counter()
+    stage_started = request_started
+    stage_timings: dict[str, int | None] = {"latency_ms_first_token": None}
+
+    def mark_stage(name: str) -> None:
+        nonlocal stage_started
+        now = time.perf_counter()
+        stage_timings[name] = int((now - stage_started) * 1000)
+        stage_started = now
+
     artist = db.get(Artist, payload.artist_id)
     if artist is None:
         raise HTTPException(status_code=404, detail="Artist not found")
+    mark_stage("db_artist_load_ms")
 
     user_message = Message(conversation_id=payload.conversation_id, role="user", content=payload.message)
     db.add(user_message)
     db.commit()
     db.refresh(user_message)
+    mark_stage("db_user_message_save_ms")
 
     artist_rules = load_artist_rules(db, payload.artist_id)
     recent_messages = load_recent_messages(db, payload.conversation_id, limit=10)
     fan_memories = load_fan_memories(db, payload.fan_id, payload.artist_id, limit=8)
     conversation_summary = load_conversation_summary(db, payload.conversation_id)
+    mark_stage("context_load_ms")
     rag_chunks = annotate_rag_chunks(RagService().search(payload.message, artist_id=payload.artist_id, top_k=4))
+    mark_stage("rag_search_ms")
     boundary_risk = detect_boundary_risk(payload.message)
     safety_context = build_safety_context(artist_rules, boundary_risk)
     prompt_strategy = select_prompt_strategy(payload.message, boundary_risk, rag_chunks)
@@ -81,17 +96,21 @@ async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db))
         safety_context=safety_context,
         prompt_strategy=prompt_strategy_debug,
     )
+    mark_stage("prompt_build_ms")
 
     async def event_stream() -> AsyncIterator[str]:
-        started = time.perf_counter()
+        generation_started = time.perf_counter()
         chunks: list[str] = []
         client = LLMClient()
         async for token in client.stream_chat(messages):
+            if stage_timings["latency_ms_first_token"] is None:
+                stage_timings["latency_ms_first_token"] = int((time.perf_counter() - request_started) * 1000)
             chunks.append(token)
             yield _sse({"type": "token", "content": token})
 
         artist_response = "".join(chunks)
-        latency_ms = int((time.perf_counter() - started) * 1000)
+        stage_timings["generation_stream_ms"] = int((time.perf_counter() - generation_started) * 1000)
+        latency_ms = int((time.perf_counter() - request_started) * 1000)
         assistant_message = Message(
             conversation_id=payload.conversation_id,
             role="assistant",
@@ -99,6 +118,9 @@ async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db))
         )
         db.add(assistant_message)
         db.flush()
+        stage_timings["db_assistant_message_flush_ms"] = int((time.perf_counter() - generation_started) * 1000) - int(
+            stage_timings["generation_stream_ms"] or 0
+        )
 
         evaluation = evaluate_response(
             fan_message=payload.message,
@@ -133,6 +155,28 @@ async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db))
         )
         db.add(response_log)
         db.flush()
+        db.add(EvalLog(response_log_id=response_log.id, **evaluation))
+        db.commit()
+        if payload.allow_memory_storage:
+            memory_extraction = auto_extract_and_store_memories(
+                db=db,
+                fan_id=payload.fan_id,
+                artist_id=payload.artist_id,
+                source_message_id=user_message.id,
+                fan_message=payload.message,
+                assistant_response=artist_response,
+                boundary_risk=boundary_risk,
+            )
+        else:
+            memory_extraction = {
+                "version": "v4",
+                "candidates": [],
+                "stored": [],
+                "skipped": [{"decision": "do_not_store", "skip_reason": "user_disabled_future_memory"}],
+            }
+        summarize_if_needed(db, payload.conversation_id)
+        stage_timings["eval_logging_memory_ms"] = int((time.perf_counter() - request_started) * 1000) - latency_ms
+        stage_timings["latency_ms_total"] = int((time.perf_counter() - request_started) * 1000)
         usage_log = build_request_usage_log(
             response_log_id=response_log.id,
             fan_id=payload.fan_id,
@@ -140,19 +184,19 @@ async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db))
             model_route=model_route,
             input_tokens=input_tokens,
             output_tokens=output_tokens,
-            latency_ms=latency_ms,
+            latency_ms=stage_timings["latency_ms_total"] or latency_ms,
             rag_chunks=rag_chunks,
             fan_memories=fan_memories,
             eval_version=v4_eval["rubric_version"],
+            latency_ms_first_token=stage_timings["latency_ms_first_token"],
+            stage_timings=stage_timings,
         )
-        db.add(EvalLog(response_log_id=response_log.id, **evaluation))
-        db.commit()
-        summarize_if_needed(db, payload.conversation_id)
 
         debug_payload = {
             "used_memory": prompt_debug["used_memory"],
             "used_rag": rag_chunks,
             "latency_ms": latency_ms,
+            "latency": stage_timings,
             "prompt_version": prompt_debug["prompt_version"],
             "prompt_strategy": prompt_debug["prompt_strategy"],
             "evaluation": evaluation,
@@ -160,6 +204,7 @@ async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db))
             "boundary_risk": boundary_risk,
             "model_route": model_route,
             "usage_log": usage_log,
+            "memory_extraction": memory_extraction,
         }
         yield _sse({"type": "debug", "payload": debug_payload})
         yield _sse({"type": "done"})

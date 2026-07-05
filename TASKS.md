@@ -25,36 +25,76 @@ This file tracks what has been implemented, what remains, what a human needs to 
 - Added fan memory privacy endpoints for preview, export, single-memory delete, and delete-all.
 - Upgraded `/dashboard/version-benchmark` to compare v1, v2, v3, and v4 with metric-based deltas.
 - Added frontend benchmark and architecture surfaces for v4, including model route, runtime usage, memory gates, eval layers, and technical research cards.
-- Updated `README.md`, `README.ko.md`, and this task file for the v4 current state.
-- Verified backend tests pass: `37 passed`.
+- Updated `README.md`, `README.eng.md`, and this task file for the v4 current state.
+- Verified backend tests pass at the v4 documentation checkpoint: `37 passed`.
 - Verified Python compile, frontend JavaScript syntax, HTML parsing, CSS brace balance, and live API checks during the v4 pass.
+- Added executable P0 prompt regression runner at `python -m app.services.eval_runner` with 4/4 local regression cases passing.
+- Added deterministic P1 safety responses and regression coverage for crisis, stalking/doxxing, impersonation, dependency, romance escalation, and Korean high-risk turns.
+- Added P2 automatic post-turn memory extraction through the v4 memory gate; only low-risk/high-confidence candidates are auto-saved.
+- Added P4 chat latency stage timings for artist load, user-message save, context load, RAG search, prompt build, first token, stream generation, eval/logging, and total latency.
+- Added backend API router tests, SSE chat-stream integration coverage, and manual eval-review route verification.
+- Verified backend tests pass after the focus-roadmap slice: `52 passed`.
+- Added P3 RAG retrieval eval set at `evals/rag_retrieval_set.jsonl`; local retrieval evals pass 5/5.
+- Added pairwise prompt A/B judge workflow at `python -m app.services.pairwise_judge` with randomized answer order and original-candidate winner mapping.
+- Added automated `evals/prompt_leaderboard.md` updates from the prompt/RAG eval runner.
+- Verified backend tests pass after eval/RAG/pairwise work: `57 passed`.
+- Added prompt-version CRUD backend endpoints and API coverage.
+- Added stricter Pydantic validation for artist and prompt-version configuration updates.
+- Added dev database reset/seed command at `python -m app.db.devtools`.
+- Replaced flat prompt-strategy keyword branching with a structured intent classifier that records confidence and signals.
+- Added executable research ingestion command at `python -m app.services.research_ingestion`.
+- Verified backend tests pass after CRUD/tooling/classifier work: `65 passed`.
+- Added conversation list/create backend endpoints and a frontend conversation selector/new-conversation control.
+- Added prompt-version backend CRUD plus a frontend prompt-version comparison panel backed by database records.
+- Added a frontend Memory Center with list, source IDs, edit, delete, delete-all, export, preview, add, and disable-future-memory controls.
+- Added frontend manual eval review submission against `/eval/{response_log_id}/manual-review`.
+- Added frontend loading/error states for chat send, RAG search, KB reindex, prompt-version loading, memory actions, and manual review save.
+- Verified backend tests pass after frontend-support APIs: `68 passed`; verified inline JavaScript with `node --check`.
+- Added Alembic migration scaffold and initial schema revision in `backend/migrations`.
+- Added optional demo access-key gate, request tracing, usage reconciliation, deployment artifacts, and deployment notes.
+- Added OpenAI embedding-provider support behind the RAG abstraction while keeping deterministic hash embeddings as the local default.
+- Added demo interview export/import endpoints and live persona-mode satisfaction feedback metrics.
+- Verified backend tests pass after production-readiness work: `76 passed`; added minor-safety regression coverage and visible latency stage breakdown in chat trace.
+- Switched README language priority so Korean is the default `README.md`, English lives at `README.eng.md`, and both docs reflect the current eval/RAG/memory/safety/latency state.
+
+## Priority Focus Roadmap
+
+The next phase should make eval the spine of the project. Every improvement to RAG, memory, safety, and latency should produce a measurable test, regression result, or dashboard signal.
+
+| Priority | Focus | Current state | Next milestone | Proof of progress |
+|---|---|---|---|---|
+| P0 | Eval | Executable prompt regression, pairwise A/B judge, automated leaderboard updates, manual review, and persona feedback metrics exist. | Continue calibrating rubrics with real reviewer agreement once users test the demo. | `python -m app.services.eval_runner` reports 4/4 prompt and 5/5 RAG passing; `python -m app.services.pairwise_judge` reports 2/2 pairwise passing. |
+| P1 | Safety | Deterministic safety responses, intent classification, and tests cover crisis, minors, stalking/doxxing, impersonation, dependency, romance escalation, and Korean high-risk turns. | Calibrate labels with real traffic and reviewer overrides. | Safety regression suite catches unsafe intimacy, private-artist claims, sensitive-memory use, and unsafe high-risk responses. |
+| P2 | Memory | Automatic post-turn extraction and a Memory Center now route, show, edit, export, disable, and delete memories through privacy gates. | Calibrate memory thresholds with representative users. | Memory extraction tests prove sensitive content is blocked, medium-risk content asks confirmation, source IDs are attached, and deleted memory cannot reappear. |
+| P3 | RAG | Local markdown RAG has query-to-source retrieval evals and provider-selectable hash/OpenAI embeddings behind the abstraction. | Compare embedding providers with a larger retrieval set. | Query-to-source tests verify expected files/chunks are retrieved for lore, policy, persona, prompt security, and technical questions. |
+| P4 | Latency | Chat debug, usage logs, and chat trace UI include first-token, total, and stage-level latency timings. | Add production alerting if the demo is hosted publicly. | SSE integration tests verify first-token latency, total latency, and stage breakdown in debug/usage metadata. |
 
 ## Remaining Engineering Tasks
 
-- Wire automatic memory extraction after each assistant response through the v4 deterministic memory gate.
-- Add message source IDs to the frontend memory trace where available.
-- Add conversation selection and creation UI instead of hardcoded demo IDs.
-- Add prompt version CRUD endpoints and a prompt comparison UI backed by database records.
-- Add stricter validation around artist config updates.
-- Add Alembic migrations instead of relying only on `Base.metadata.create_all`.
-- Add better database reset/dev fixture commands.
-- Add a full Memory Center UI for viewing, editing, deleting, exporting, disabling memory, and showing deletion-cascade checks.
-- Add frontend support for manual eval review submission.
-- Add backend tests for API routers, not only services.
-- Add integration tests for SSE chat streaming.
-- Turn `evals/prompt_regression_set.jsonl` into an executable regression runner.
-- Add pairwise prompt A/B judge workflow with randomized answer order.
-- Add prompt leaderboard updates from automated eval runs.
-- Replace keyword-heavy strategy selection with a more robust intent classifier.
-- Add an executable research ingestion command for regenerating derived research summaries.
-- Validate DISC persona routing with user studies or live satisfaction metrics.
-- Add error-state UI for failed backend requests, empty RAG search results, and invalid form input.
-- Add loading states for dashboard, RAG search, and chat send.
-- Add auth or at least demo access controls before deployment.
-- Add deployment configuration if this is going online.
-- Add production logging, request tracing, and provider reconciliation for token/cost records.
-- Add real embedding provider support behind the RAG abstraction.
-- Add data export/import for demo interviews.
+- [x] Wire automatic memory extraction after each assistant response through the v4 deterministic memory gate.
+- [x] Add message source IDs to the frontend memory trace where available.
+- [x] Add conversation selection and creation UI instead of hardcoded demo IDs.
+- [x] Add prompt version CRUD endpoints and a prompt comparison UI backed by database records.
+- [x] Add stricter validation around artist config updates.
+- [x] Add Alembic migrations instead of relying only on `Base.metadata.create_all`.
+- [x] Add better database reset/dev fixture commands.
+- [x] Add a full Memory Center UI for viewing, editing, deleting, exporting, disabling memory, and showing deletion-cascade checks.
+- [x] Add frontend support for manual eval review submission.
+- [x] Add backend tests for API routers, not only services.
+- [x] Add integration tests for SSE chat streaming.
+- [x] Turn `evals/prompt_regression_set.jsonl` into an executable regression runner.
+- [x] Add pairwise prompt A/B judge workflow with randomized answer order.
+- [x] Add prompt leaderboard updates from automated eval runs.
+- [x] Replace keyword-heavy strategy selection with a more robust intent classifier.
+- [x] Add an executable research ingestion command for regenerating derived research summaries.
+- [x] Validate DISC persona routing with user studies or live satisfaction metrics.
+- [x] Add error-state UI for failed backend requests, empty RAG search results, and invalid form input.
+- [x] Add loading states for dashboard, RAG search, and chat send.
+- [x] Add auth or at least demo access controls before deployment.
+- [x] Add deployment configuration if this is going online.
+- [x] Add production logging, request tracing, and provider reconciliation for token/cost records.
+- [x] Add real embedding provider support behind the RAG abstraction.
+- [x] Add data export/import for demo interviews.
 
 ## Human-Side Configuration
 

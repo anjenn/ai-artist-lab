@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: blue-garage-ai-artist-lab
+    env: docker
+    plan: starter
+    autoDeploy: false
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4.1-mini
+      - key: DEMO_ACCESS_KEY
+        sync: false
+      - key: EMBEDDING_PROVIDER
+        value: hash

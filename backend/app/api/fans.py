@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.schemas.fans import FanMemoryCreate, FanMemoryPreviewRequest, FanMemoryRead
+from app.schemas.fans import FanMemoryCreate, FanMemoryPreviewRequest, FanMemoryRead, FanMemoryUpdate
 from app.services.memory_service import (
     classify_memory_candidate,
     create_fan_memory,
@@ -12,6 +12,7 @@ from app.services.memory_service import (
     delete_fan_memory,
     export_fan_memories,
     load_fan_memories,
+    update_fan_memory,
 )
 from app.services.safety_service import detect_boundary_risk
 
@@ -51,6 +52,14 @@ def preview_fan_memory(fan_id: int, payload: FanMemoryPreviewRequest) -> dict:
 @router.get("/{fan_id}/memories/export")
 def export_memories(fan_id: int, artist_id: int = 1, db: Session = Depends(get_db)) -> dict:
     return export_fan_memories(db, fan_id=fan_id, artist_id=artist_id)
+
+
+@router.put("/{fan_id}/memories/{memory_id}", response_model=FanMemoryRead)
+def edit_fan_memory(fan_id: int, memory_id: int, payload: FanMemoryUpdate, db: Session = Depends(get_db)):
+    memory = update_fan_memory(db, fan_id=fan_id, memory_id=memory_id, **payload.model_dump(exclude_unset=True))
+    if memory is None:
+        raise HTTPException(status_code=404, detail="Memory not found")
+    return memory
 
 
 @router.delete("/{fan_id}/memories")

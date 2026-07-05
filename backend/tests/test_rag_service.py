@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from app.core.config import get_settings
 from app.services.rag_service import RagService
 
 
@@ -44,3 +45,15 @@ def test_korean_prompt_quality_research_query_prefers_v2_note(tmp_path):
     results = rag.search("프롬프트 보안 평가 리서치", top_k=2)
 
     assert results[0]["source"] == "prompt_quality_research_v2.md"
+
+
+def test_rag_service_selects_configured_openai_embedding_provider_when_key_present(tmp_path, monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    monkeypatch.setenv("EMBEDDING_PROVIDER", "openai")
+    get_settings.cache_clear()
+
+    rag = RagService(chroma_path=str(tmp_path / "chroma"), use_chroma=False)
+
+    assert rag.embedding_provider_name == "openai"
+    assert rag.embedding_function.model == get_settings().openai_embedding_model
+    get_settings.cache_clear()

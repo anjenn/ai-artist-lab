@@ -73,6 +73,28 @@ class HashEmbeddingFunction:
         return [value / norm for value in vector]
 
 
+class OpenAIEmbeddingFunction:
+    """Chroma-compatible embedding function backed by OpenAI embeddings."""
+
+    def __init__(self, api_key: str, model: str) -> None:
+        self.api_key = api_key
+        self.model = model
+
+    def __call__(self, input: list[str]) -> list[list[float]]:
+        from openai import OpenAI
+
+        client = OpenAI(api_key=self.api_key)
+        response = client.embeddings.create(model=self.model, input=input)
+        return [item.embedding for item in response.data]
+
+
+def build_embedding_function(settings, provider: str | None = None):
+    requested = (provider or settings.embedding_provider or "hash").lower()
+    if requested == "openai" and settings.openai_api_key:
+        return "openai", OpenAIEmbeddingFunction(settings.openai_api_key, settings.openai_embedding_model)
+    return "hash", HashEmbeddingFunction()
+
+
 class LocalKnowledgeStore:
     def __init__(self, path: Path) -> None:
         self.path = path
@@ -164,11 +186,11 @@ class LocalKnowledgeStore:
 
 
 class RagService:
-    def __init__(self, chroma_path: str | None = None, use_chroma: bool | None = None) -> None:
+    def __init__(self, chroma_path: str | None = None, use_chroma: bool | None = None, embedding_provider: str | None = None) -> None:
         settings = get_settings()
         self.chroma_path = Path(chroma_path or settings.chroma_path)
         self.collection_name = "artist_knowledge"
-        self.embedding_function = HashEmbeddingFunction()
+        self.embedding_provider_name, self.embedding_function = build_embedding_function(settings, embedding_provider)
         self._use_chroma = False
         self._client = None
         self._collection = None

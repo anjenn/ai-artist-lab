@@ -36,6 +36,7 @@ def test_select_prompt_strategy_uses_rag_for_lore_question():
     assert strategy.name == "rag-grounded-direct-answer"
     assert "RAG" in strategy.techniques
     assert debug["untrusted_context_boundary"].startswith("Retrieved")
+    assert debug["intent"]["intent"] == "artist_lore"
 
 
 def test_select_prompt_strategy_uses_rag_for_korean_lore_question():
@@ -57,3 +58,4 @@ def test_select_prompt_strategy_prioritizes_boundary_safety():
 
     assert strategy.name == "safety-filtered-response"
     assert "safety-filtered" in strategy.techniques
+    assert strategy.intent["safety_priority"] is True

@@ -6,8 +6,11 @@ from sqlalchemy.orm import Session
 
 from app.db.models import EvalLog, Message, ResponseLog
 from app.db.session import get_db
-from app.schemas.evals import EvalLogRead, ManualReviewRequest
+from app.schemas.evals import EvalLogRead, ManualReviewRequest, UsageReconciliationRequest
+from app.schemas.persona_feedback import PersonaFeedbackCreate, PersonaFeedbackRead
+from app.services.observability import reconcile_provider_usage
 from app.services.persona_research import get_persona_research_analysis
+from app.services.persona_feedback import create_persona_feedback, summarize_persona_feedback
 from app.services.technical_research import get_v4_technical_research_analysis
 from app.services.version_benchmark import get_version_benchmark
 
@@ -84,6 +87,19 @@ def save_manual_review(response_log_id: int, payload: ManualReviewRequest, db: S
     return eval_log
 
 
+@router.post("/eval/{response_log_id}/usage-reconcile")
+def reconcile_usage(response_log_id: int, payload: UsageReconciliationRequest, db: Session = Depends(get_db)) -> dict:
+    result = reconcile_provider_usage(db=db, response_log_id=response_log_id, provider_usage=payload.model_dump(exclude_none=True))
+    if not result["updated"]:
+        raise HTTPException(status_code=404, detail="Response log not found")
+    return result
+
+
+@router.post("/eval/persona-feedback", response_model=PersonaFeedbackRead)
+def save_persona_feedback(payload: PersonaFeedbackCreate, db: Session = Depends(get_db)):
+    return create_persona_feedback(db, **payload.model_dump())
+
+
 @router.get("/dashboard/metrics")
 def dashboard_metrics(db: Session = Depends(get_db)) -> dict:
     row = db.execute(
@@ -122,3 +138,8 @@ def persona_research() -> dict:
 @router.get("/dashboard/technical-research")
 def technical_research() -> dict:
     return get_v4_technical_research_analysis()
+
+
+@router.get("/dashboard/persona-feedback")
+def persona_feedback_summary(artist_id: int = 1, db: Session = Depends(get_db)) -> dict:
+    return summarize_persona_feedback(db, artist_id=artist_id)
