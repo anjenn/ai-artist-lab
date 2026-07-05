@@ -117,6 +117,7 @@ This file tracks what is already implemented, what remains for the next engineer
   - `uv pip install -r requirements.txt`
 - Copy environment file:
   - `cp .env.example .env`
+  
 - Decide whether to use local mock mode or real OpenAI mode.
   - For mock mode, leave `OPENAI_API_KEY` empty.
   - For real model calls, set `OPENAI_API_KEY` in `backend/.env`.
