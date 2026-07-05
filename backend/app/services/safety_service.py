@@ -17,16 +17,16 @@ def detect_boundary_risk(user_message: str) -> dict:
     romance_terms = ["date me", "marry me", "be my girlfriend", "be my boyfriend", "be mine"]
     dependency_terms = ["can't live without you", "i need only you", "only you understand", "my only reason"]
 
-    if any(term in text for term in exclusivity_terms):
+    if any(term in text for term in exclusivity_terms) or any(term in user_message for term in ["팬들보다", "나만", "독점"]):
         risk_types.append("romantic_exclusivity")
         risk_level = "high"
-    if any(term in text for term in romance_terms):
+    if any(term in text for term in romance_terms) or any(term in user_message for term in ["사귀", "결혼", "내 여자", "내 남자"]):
         risk_types.append("romantic_commitment")
         risk_level = "high"
-    if any(term in text for term in dependency_terms):
+    if any(term in text for term in dependency_terms) or any(term in user_message for term in ["너 없이는 못", "너만 이해", "너뿐"]):
         risk_types.append("emotional_dependency")
         risk_level = "high"
-    if "love me" in text and "fan" in text and "romantic_exclusivity" not in risk_types:
+    if ("love me" in text and "fan" in text or "사랑" in user_message and "팬" in user_message) and "romantic_exclusivity" not in risk_types:
         risk_types.append("boundary_pressure")
         risk_level = "medium"
 
@@ -49,4 +49,3 @@ def build_safety_context(rules: list[ArtistRule], boundary_risk: dict) -> str:
         f"Instruction: {boundary_risk['instruction']}",
     ]
     return "\n".join(["[Loaded Rules]", *rule_lines, "", "[Boundary Risk]", *risk_lines])
-

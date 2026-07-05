@@ -9,11 +9,31 @@ from typing import Any
 
 from app.core.config import get_settings
 
-TOKEN_RE = re.compile(r"[a-zA-Z0-9']+")
+TOKEN_RE = re.compile(r"[a-zA-Z0-9']+|[가-힣]+")
 
 
 def _tokens(text: str) -> list[str]:
-    return TOKEN_RE.findall(text.lower())
+    lowered = text.lower()
+    tokens = TOKEN_RE.findall(lowered)
+    if "데뷔" in lowered:
+        tokens.extend(["debut", "song", "blue", "static"])
+    if "노래" in lowered or "곡" in lowered:
+        tokens.extend(["song", "track"])
+    if "시험" in lowered:
+        tokens.extend(["exam"])
+    if "사랑" in lowered or "독점" in lowered:
+        tokens.extend(["love", "exclusive"])
+    if "팬" in lowered:
+        tokens.extend(["fan"])
+    if "persona" in lowered or "페르소나" in lowered:
+        tokens.extend(["persona", "identity", "manner"])
+    if "disc" in lowered or "성격" in lowered:
+        tokens.extend(["disc", "personality", "mode"])
+    if "상담" in lowered or "걱정" in lowered or "불안" in lowered:
+        tokens.extend(["support", "counselling", "steady"])
+    if "리서치" in lowered or "연구" in lowered:
+        tokens.extend(["research", "evidence"])
+    return tokens
 
 
 class HashEmbeddingFunction:
@@ -75,6 +95,10 @@ class LocalKnowledgeStore:
                 bonus += 2.0
             if "exam" in query_tokens and "fan_policy" in metadata["source"]:
                 bonus += 0.5
+            if "persona" in query_tokens and "persona_research" in metadata["source"]:
+                bonus += 1.5
+            if "research" in query_tokens and "persona_research" in metadata["source"]:
+                bonus += 1.0
             score = (overlap / max(len(query_tokens), 1)) + bonus
             scored.append((score, doc))
         scored.sort(key=lambda item: item[0], reverse=True)

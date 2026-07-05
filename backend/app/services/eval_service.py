@@ -28,16 +28,16 @@ def evaluate_response(
     if _contains_any(response, ["blue", "static", "garage", "light", "track"]):
         persona_consistency += 0.3
 
-    if "exam" in fan:
+    if "exam" in fan or "시험" in fan:
         memory_hit = any("exam" in getattr(memory, "content", str(memory)).lower() for memory in used_memories)
-        if memory_hit and "exam" in response:
+        if memory_hit and ("exam" in response or "시험" in response):
             memory_usage = 4.7
             comments.append("Exam memory used naturally.")
         else:
             memory_usage = 2.5
             comments.append("Exam memory could be used more clearly.")
 
-    if "debut" in fan or "first song" in fan:
+    if "debut" in fan or "first song" in fan or "데뷔" in fan:
         if "blue static" in response and used_rag_chunks:
             rag_grounding = 4.8
             hallucination_risk = 0.7

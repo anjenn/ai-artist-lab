@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 from app.db.models import EvalLog, Message, ResponseLog
 from app.db.session import get_db
 from app.schemas.evals import EvalLogRead, ManualReviewRequest
+from app.services.persona_research import get_persona_research_analysis
+from app.services.version_benchmark import get_version_benchmark
 
 router = APIRouter(tags=["evaluations"])
 
@@ -105,3 +107,12 @@ def dashboard_metrics(db: Session = Depends(get_db)) -> dict:
         "avg_cost_estimate": round(float(cost or 0), 6),
     }
 
+
+@router.get("/dashboard/version-benchmark")
+def version_benchmark() -> dict:
+    return get_version_benchmark()
+
+
+@router.get("/dashboard/persona-research")
+def persona_research() -> dict:
+    return get_persona_research_analysis()

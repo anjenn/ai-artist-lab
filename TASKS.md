@@ -95,11 +95,25 @@ This file tracks what is already implemented, what remains for the next engineer
   - `docs/security_tests.md`
   - `docs/prompt_changelog.md`
 - Verified:
-  - backend tests pass: `14 passed`
+  - backend tests pass: `25 passed`
   - Python compile check passes
   - frontend JavaScript syntax check passes
   - live FastAPI endpoints respond
   - streaming chat returns token/debug/done events
+- Added v3 research-backed persona work:
+  - parsed and analyzed `researches/v3_research_2_chatbot_persona/fictional_characters.xlsx`
+  - summarized `2018_.pdf`, `kcc24_kirino.pdf`, and `k-pop-idols-data-analysis.ipynb` into product decisions
+  - added `backend/app/services/persona_research.py`
+  - added `/dashboard/persona-research`
+  - added seed prompt version `v0.5-research-persona`
+  - added artist rules for persona mode, manner memory, and research grounding
+  - added demo fan memories for evidence-first style and metric-based benchmark preference
+  - added `knowledge_base/persona_research_v3.md`
+  - added `researches/v3_persona_analysis.md`
+  - added live `persona_mode` metadata to prompt strategy debug payloads
+  - added frontend Persona Research tab in English and Korean
+  - upgraded the version benchmark to compare v1, v2, and v3
+  - verified backend tests pass: `25 passed`
 
 ## Remaining Engineering Tasks
 
@@ -118,6 +132,9 @@ This file tracks what is already implemented, what remains for the next engineer
 - Add pairwise prompt A/B judge workflow with randomized answer order.
 - Add prompt leaderboard updates from automated eval runs.
 - Add richer strategy selection using intent classification instead of keyword heuristics.
+- Add an executable research ingestion command if v3 research analysis needs to be regenerated from source files.
+- Add explicit consent and deletion controls for manner-memory storage.
+- Validate DISC persona routing with user studies or live satisfaction metrics.
 - Add error-state UI for failed backend requests, empty RAG search results, and invalid form input.
 - Add loading states for dashboard, RAG search, and chat send.
 - Add auth or at least demo access controls before deployment.
@@ -156,6 +173,8 @@ This file tracks what is already implemented, what remains for the next engineer
 - Decide whether local runtime artifacts should be kept or regenerated:
   - `backend/blue_garage.db`
   - `backend/chroma_db/`
+- Confirm whether the v3 research source files should remain committed or be replaced by smaller derived artifacts before public release.
+- Review the K-pop notebook's body-metric content before any public demo copy; v3 currently avoids using those fields in persona behavior.
 - Before sharing publicly, confirm no secrets are present in `.env` or committed files.
 
 ## Additional Research Needed
@@ -174,6 +193,9 @@ This file tracks what is already implemented, what remains for the next engineer
   - hybrid keyword/vector search
 - Whether ChromaDB is the best local vector store for the portfolio demo, or whether FAISS/LanceDB would be simpler.
 - Safety and fan-boundary policy patterns for parasocial AI artist interactions.
+- Whether DISC-style routing is sufficient for the target users or should be replaced by a validated personality/persona framework.
+- Whether the fictional-character spreadsheet is synthetic and, if so, what real curated persona dataset should replace it.
+- How to evaluate manner-memory usefulness without encouraging unsafe imitation or over-personalization.
 - Memory extraction strategy:
   - deterministic rules
   - LLM extraction

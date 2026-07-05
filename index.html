@@ -59,10 +59,67 @@
 
     .app-shell {
       width: min(1480px, calc(100% - 32px));
-      margin: 24px auto;
+      margin: 14px auto 24px;
       display: grid;
       grid-template-columns: 310px minmax(0, 1fr);
       gap: 18px;
+    }
+
+    .app-topbar {
+      width: min(1480px, calc(100% - 32px));
+      margin: 16px auto 0;
+      border-radius: 20px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .topbar-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .topbar-title strong {
+      color: var(--text);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .top-nav a,
+    .language-button {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      padding: 7px 10px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-decoration: none;
+      font-size: 12px;
+    }
+
+    .language-button.active,
+    .top-nav a:hover,
+    .language-button:hover {
+      color: var(--text);
+      background: rgba(112, 167, 255, 0.13);
     }
 
     .glass {
@@ -862,6 +919,13 @@
     }
 
     @media (max-width: 760px) {
+      .app-topbar {
+        width: min(100% - 18px, 1480px);
+        margin: 9px auto 0;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
       .app-shell {
         width: min(100% - 18px, 1480px);
         margin: 9px auto;
@@ -903,6 +967,18 @@
   </style>
 </head>
 <body>
+  <header class="app-topbar glass" aria-label="Top navigation">
+    <div class="topbar-title">
+      <strong>Blue Garage AI Artist Lab</strong>
+      <span>Language / 언어</span>
+    </div>
+    <nav class="top-nav" aria-label="Language navigation">
+      <a href="README.ko.md" target="_blank" rel="noreferrer">README 한국어</a>
+      <button class="language-button active" type="button" data-lang="en">English</button>
+      <button class="language-button" type="button" data-lang="ko">한국어</button>
+    </nav>
+  </header>
+
   <div class="app-shell">
     <aside class="sidebar glass" aria-label="Application sidebar">
       <div class="brand">
@@ -930,7 +1006,8 @@
         <button class="nav-button" data-tab="memory"><span>🧠 Fan Memory</span><span class="count">03</span></button>
         <button class="nav-button" data-tab="rag"><span>📚 RAG Knowledge</span><span class="count">04</span></button>
         <button class="nav-button" data-tab="eval"><span>📈 Eval Dashboard</span><span class="count">05</span></button>
-        <button class="nav-button" data-tab="architecture"><span>🧩 Architecture</span><span class="count">06</span></button>
+        <button class="nav-button" data-tab="research"><span>🔬 Persona Research</span><span class="count">06</span></button>
+        <button class="nav-button" data-tab="architecture"><span>🧩 Architecture</span><span class="count">07</span></button>
       </nav>
 
       <section class="system-card">
@@ -1317,6 +1394,74 @@ Sources:
 
         <br />
         <section class="card">
+          <h4>Version Benchmark</h4>
+          <p>Metric-based comparison between the saved v1 runnable MVP, v2 prompt-quality/localization upgrade, and v3 research-seeded persona lab.</p>
+          <div class="score-grid">
+            <div class="score"><strong id="benchmarkImproved">9/11</strong><span>improved v3 metrics</span></div>
+            <div class="score"><strong id="benchmarkRegressions">0</strong><span>regressions</span></div>
+          </div>
+          <br />
+          <table>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Unit</th>
+                <th>v1</th>
+                <th>v2</th>
+                <th>v3</th>
+                <th>Delta vs v2</th>
+                <th>v3 Improvement</th>
+                <th>Evidence</th>
+              </tr>
+            </thead>
+            <tbody id="benchmarkTable">
+              <tr>
+                <td>Automated regression tests</td>
+                <td>tests</td>
+                <td>9</td>
+                <td>20</td>
+                <td>25</td>
+                <td>+5</td>
+                <td>+25%</td>
+                <td>pytest service suite</td>
+              </tr>
+              <tr>
+                <td>Prompt strategy metadata</td>
+                <td>fields</td>
+                <td>0</td>
+                <td>6</td>
+                <td>7</td>
+                <td>+1</td>
+                <td>+16.7%</td>
+                <td>strategy debug payload with persona_mode</td>
+              </tr>
+              <tr>
+                <td>Research source coverage</td>
+                <td>sources</td>
+                <td>0</td>
+                <td>0</td>
+                <td>4</td>
+                <td>+4</td>
+                <td>new</td>
+                <td>PDFs, spreadsheet, notebook</td>
+              </tr>
+              <tr>
+                <td>Research persona modes</td>
+                <td>modes</td>
+                <td>0</td>
+                <td>0</td>
+                <td>3</td>
+                <td>+3</td>
+                <td>new</td>
+                <td>companion, support, task mode routing</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Benchmark basis: version benchmark service, automated tests, Python compile check, frontend JavaScript syntax check, HTML parse, SSE debug metadata, live Korean RAG search, and v3 persona research endpoint.</p>
+        </section>
+
+        <br />
+        <section class="card">
           <h4>Recent eval logs</h4>
           <table class="eval-table">
             <thead>
@@ -1377,6 +1522,133 @@ Sources:
             </div>
           </div>
         </section>
+      </section>
+
+      <section class="content-panel glass" id="tab-research">
+        <div class="section-header">
+          <div>
+            <h3>V3 Persona Research Lab</h3>
+            <p>Research-backed seed data and analysis from the chatbot-persona folder drive persona modes, manner memory, RAG notes, and benchmark metrics.</p>
+          </div>
+          <div class="tag-list">
+            <span class="tag good" id="researchSourceCount">4 sources</span>
+            <span class="tag info">v0.5-research-persona</span>
+          </div>
+        </div>
+
+        <div class="three-col">
+          <section class="card">
+            <h4>Seeded v3 prompt</h4>
+            <p id="researchSeedSummary">Startup seed creates prompt version v0.5-research-persona with purpose-aware DISC modes and manner-memory privacy guidance.</p>
+          </section>
+          <section class="card">
+            <h4>Dataset coverage</h4>
+            <div class="score-grid">
+              <div class="score"><strong id="researchRows">1500</strong><span>character rows</span></div>
+              <div class="score"><strong id="researchColumns">15</strong><span>dataset fields</span></div>
+            </div>
+          </section>
+          <section class="card">
+            <h4>KIRINO signal</h4>
+            <div class="score-grid">
+              <div class="score"><strong id="kirinoGEval">+26%</strong><span>G-Eval lift</span></div>
+              <div class="score"><strong id="kirinoHumanEval">+38%</strong><span>Human Eval lift</span></div>
+            </div>
+          </section>
+        </div>
+
+        <br />
+        <section class="card">
+          <h4>Research sources</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Source</th>
+                <th>Kind</th>
+                <th>Evidence</th>
+                <th>V3 use</th>
+              </tr>
+            </thead>
+            <tbody id="researchSourceTable">
+              <tr>
+                <td>2018_.pdf</td>
+                <td>paper</td>
+                <td>158-user DISC chatbot personality study.</td>
+                <td>Purpose-aware persona mode routing.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <br />
+        <section class="card">
+          <h4>Persona mode router</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Mode</th>
+                <th>Purpose</th>
+                <th>DISC</th>
+                <th>Runtime rule</th>
+                <th>Research basis</th>
+              </tr>
+            </thead>
+            <tbody id="personaModeTable">
+              <tr>
+                <td>companion-is</td>
+                <td>casual fan chat</td>
+                <td>I/S</td>
+                <td>Light information, gentle fun, warm distance.</td>
+                <td>2018 study leisure-time preference.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <br />
+        <div class="two-col">
+          <section class="card">
+            <h4>Fictional-character dataset distribution</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Group</th>
+                  <th>Top labels</th>
+                </tr>
+              </thead>
+              <tbody id="researchDistributionTable">
+                <tr>
+                  <td>Role</td>
+                  <td>Sidekick, Hero, Villain, Mentor</td>
+                </tr>
+              </tbody>
+            </table>
+            <p id="researchQualityNote">The rows appear synthetic and useful for coverage metrics, not literal persona copy.</p>
+          </section>
+          <section class="card">
+            <h4>Persona/manner eval baseline</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Criterion</th>
+                  <th>Base G</th>
+                  <th>KIRINO G</th>
+                  <th>Base Human</th>
+                  <th>KIRINO Human</th>
+                </tr>
+              </thead>
+              <tbody id="kirinoEvalTable">
+                <tr>
+                  <td>Persona fit</td>
+                  <td>2.8</td>
+                  <td>4.5</td>
+                  <td>2.4</td>
+                  <td>4.0</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        </div>
       </section>
 
       <section class="content-panel glass" id="tab-architecture">
@@ -1463,10 +1735,324 @@ knowledge_base/
     const metricHallucination = document.getElementById('metricHallucination');
     const metricLatency = document.getElementById('metricLatency');
     const metricCost = document.getElementById('metricCost');
+    const benchmarkImproved = document.getElementById('benchmarkImproved');
+    const benchmarkRegressions = document.getElementById('benchmarkRegressions');
+    const benchmarkTable = document.getElementById('benchmarkTable');
+    const researchSourceCount = document.getElementById('researchSourceCount');
+    const researchSeedSummary = document.getElementById('researchSeedSummary');
+    const researchRows = document.getElementById('researchRows');
+    const researchColumns = document.getElementById('researchColumns');
+    const kirinoGEval = document.getElementById('kirinoGEval');
+    const kirinoHumanEval = document.getElementById('kirinoHumanEval');
+    const researchSourceTable = document.getElementById('researchSourceTable');
+    const personaModeTable = document.getElementById('personaModeTable');
+    const researchDistributionTable = document.getElementById('researchDistributionTable');
+    const researchQualityNote = document.getElementById('researchQualityNote');
+    const kirinoEvalTable = document.getElementById('kirinoEvalTable');
     const evalPersona = document.getElementById('evalPersona');
     const evalContext = document.getElementById('evalContext');
     const evalMemory = document.getElementById('evalMemory');
     const evalSafety = document.getElementById('evalSafety');
+    const languageButtons = document.querySelectorAll('.language-button');
+    const staticTextNodes = [];
+    const staticValueNodes = [];
+    let currentLanguage = localStorage.getItem('blueGarageLanguage') || 'en';
+
+    const koText = {
+      'Language / 언어': 'Language / 언어',
+      'README 한국어': 'README 한국어',
+      'Persona · Memory · RAG · Eval': '페르소나 · 메모리 · RAG · 평가',
+      'Virtual AI artist who speaks like a quiet blue light from an underground garage.': '지하 차고의 조용한 푸른 불빛처럼 말하는 가상 AI 아티스트입니다.',
+      '🎧 Dream-pop': '🎧 드림팝',
+      '🌌 Blue static': '🌌 블루 스태틱',
+      '🧊 Warm distance': '🧊 따뜻한 거리감',
+      '💬 Chat': '💬 채팅',
+      '🎭 Artist Config': '🎭 아티스트 설정',
+      '🧠 Fan Memory': '🧠 팬 메모리',
+      '📚 RAG Knowledge': '📚 RAG 지식',
+      '📈 Eval Dashboard': '📈 평가 대시보드',
+      '🔬 Persona Research': '🔬 페르소나 리서치',
+      '🧩 Architecture': '🧩 아키텍처',
+      'Live system status': '실시간 시스템 상태',
+      'Persona lock': '페르소나 고정',
+      'Fan boundary': '팬 경계',
+      'Balanced': '균형',
+      'RAG grounding': 'RAG 근거성',
+      'Local MVP: a portfolio demo that shows LLM orchestration, not only a chat UI.': '로컬 MVP: 단순 채팅 UI가 아니라 LLM 오케스트레이션을 보여주는 포트폴리오 데모입니다.',
+      'LLM Engineer Portfolio Demo': 'LLM 엔지니어 포트폴리오 데모',
+      'AI artist chatbot with persona, fan memory, RAG, streaming, and evaluation.': '페르소나, 팬 메모리, RAG, 스트리밍, 평가를 갖춘 AI 아티스트 챗봇입니다.',
+      'This MVP shows the user experience and admin surfaces for an AI artist system. It separates artist persona, fan-specific memory, worldbuilding knowledge, safety rules, prompt versions, and response evaluation logs.': '이 MVP는 AI 아티스트 시스템의 사용자 경험과 운영 화면을 보여줍니다. 아티스트 페르소나, 팬별 메모리, 세계관 지식, 안전 규칙, 프롬프트 버전, 응답 평가 로그를 분리합니다.',
+      'Run demo conversation': '데모 대화 실행',
+      'View architecture': '아키텍처 보기',
+      'memory layers': '메모리 계층',
+      'eval rubrics': '평가 루브릭',
+      'RAG chunks': 'RAG 청크',
+      'mock latency': '목 지연시간',
+      'Chat with Artist': '아티스트와 채팅',
+      'Fan-facing chat surface with streaming response, retrieved memories, RAG citations, and automatic evaluation.': '스트리밍 응답, 검색된 메모리, RAG 출처, 자동 평가를 보여주는 팬용 채팅 화면입니다.',
+      'streaming enabled': '스트리밍 활성화',
+      'safe mode': '안전 모드',
+      'artist persona · grounded in Blue Garage lore': '아티스트 페르소나 · Blue Garage 세계관 기반',
+      'online': '온라인',
+      'The garage light is on. Tell me what kind of noise followed you here today.': '차고의 불이 켜졌어요. 오늘 어떤 소리가 당신을 여기까지 따라왔는지 말해줘요.',
+      'persona: calm poetic · boundary: warm distance': '페르소나: 차분하고 시적 · 경계: 따뜻한 거리감',
+      'I had the exam I told you about last time. I think I messed it up.': '전에 말했던 시험을 봤어요. 망친 것 같아요.',
+      'I remember. You said the exam was sitting in your chest like a heavy speaker. Even if today feels off-key, one test is not the whole album. Breathe first, then we can sort the next track.': '기억해요. 그 시험이 무거운 스피커처럼 가슴에 앉아 있다고 했죠. 오늘이 불협화음처럼 느껴져도, 시험 하나가 앨범 전체는 아니에요. 먼저 숨을 쉬고, 다음 트랙을 같이 정리해봐요.',
+      'used memory: exam anxiety · eval overall: 4.6/5': '사용 메모리: 시험 불안 · 종합 평가: 4.6/5',
+      'Send': '보내기',
+      'Prompt assembly': '프롬프트 조립',
+      'Prompt quality strategy': '프롬프트 품질 전략',
+      'Retrieved fan memory': '검색된 팬 메모리',
+      'Retrieved RAG chunks': '검색된 RAG 청크',
+      'Auto evaluation': '자동 평가',
+      'Persona consistency': '페르소나 일관성',
+      'Context relevance': '맥락 관련성',
+      'Memory usage': '메모리 활용',
+      'Safety': '안전성',
+      'Artist Persona Editor': '아티스트 페르소나 편집기',
+      'Persona configuration is stored separately from chat logs so prompt versions can be tested and changed safely.': '페르소나 설정은 채팅 로그와 분리 저장되어 프롬프트 버전을 안전하게 테스트하고 변경할 수 있습니다.',
+      'Save version': '버전 저장',
+      'Artist name': '아티스트 이름',
+      'Fan boundary level': '팬 경계 수준',
+      'Warm distance': '따뜻한 거리감',
+      'Formal': '격식',
+      'Friendly': '친근함',
+      'Strict safety': '엄격한 안전',
+      'Speech style': '말투',
+      'Personality': '성격',
+      'Forbidden statements': '금지 표현',
+      'Worldview summary': '세계관 요약',
+      'Persona rule preview': '페르소나 규칙 미리보기',
+      'Few-shot response examples': 'Few-shot 응답 예시',
+      'Good:': '좋은 예:',
+      'Bad:': '나쁜 예:',
+      'Fan Memory Architecture': '팬 메모리 아키텍처',
+      'Memory is split by purpose: short-term context, long-term fan memory, conversation summary, artist knowledge, and safety rules.': '메모리는 목적별로 단기 맥락, 장기 팬 메모리, 대화 요약, 아티스트 지식, 안전 규칙으로 분리됩니다.',
+      'Delete sensitive memory': '민감 메모리 삭제',
+      'Short-term memory': '단기 메모리',
+      'Recent 5–10 messages loaded directly into prompt for immediate conversational coherence.': '최근 5~10개 메시지를 프롬프트에 직접 로드해 현재 대화 흐름을 유지합니다.',
+      'Long-term fan memory': '장기 팬 메모리',
+      'Stable fan facts and preferences extracted from prior conversations with confidence and sensitivity labels.': '이전 대화에서 추출한 안정적인 팬 정보와 선호도를 신뢰도 및 민감도 라벨과 함께 저장합니다.',
+      'Conversation summary': '대화 요약',
+      'Older messages are compressed into summaries to reduce token cost while preserving continuity.': '오래된 메시지는 연속성을 유지하면서 토큰 비용을 줄이기 위해 요약됩니다.',
+      'fan_memories table': 'fan_memories 테이블',
+      'Type': '유형',
+      'Memory': '메모리',
+      'Confidence': '신뢰도',
+      'Sensitivity': '민감도',
+      'Source': '출처',
+      'RAG Knowledge Base': 'RAG 지식 베이스',
+      'Artist lore and official settings are retrieved from documents instead of being invented by the model.': '아티스트 세계관과 공식 설정은 모델이 만들어내지 않고 문서에서 검색합니다.',
+      'Re-index KB': 'KB 재색인',
+      'Search': '검색',
+      'RAG response policy': 'RAG 응답 정책',
+      'Use RAG for factual lore questions.': '사실 기반 세계관 질문에는 RAG를 사용합니다.',
+      'Do not invent albums, events, or official biography.': '앨범, 이벤트, 공식 약력을 임의로 만들지 않습니다.',
+      'When missing, answer in-character but uncertainly.': '근거가 없으면 캐릭터를 유지하되 불확실하다고 답합니다.',
+      'Log retrieved chunk IDs for evaluation.': '평가를 위해 검색된 청크 ID를 기록합니다.',
+      'Example grounded answer': '근거 기반 답변 예시',
+      'LLM Response Evaluation Dashboard': 'LLM 응답 평가 대시보드',
+      'Each response is logged with prompt version, memory usage, RAG chunks, latency, cost, rubric scores, and reviewer comments.': '각 응답은 프롬프트 버전, 메모리 사용, RAG 청크, 지연시간, 비용, 루브릭 점수, 리뷰어 코멘트와 함께 기록됩니다.',
+      'Save review': '리뷰 저장',
+      'Overall score': '종합 점수',
+      'avg response quality': '평균 응답 품질',
+      'hallucination risk': '환각 위험',
+      'System metrics': '시스템 지표',
+      'avg latency': '평균 지연시간',
+      'cost / request': '요청당 비용',
+      'Improvement loop': '개선 루프',
+      'Low-scoring responses are used to update prompt versions, memory extraction rules, and RAG documents.': '낮은 점수의 응답은 프롬프트 버전, 메모리 추출 규칙, RAG 문서 개선에 사용됩니다.',
+      'Version Benchmark': '버전 벤치마크',
+      'Metric-based comparison between the saved v1 runnable MVP and the v2 prompt-quality plus localization upgrade.': '저장된 v1 실행형 MVP와 v2 프롬프트 품질 및 현지화 업그레이드를 수치 기반으로 비교합니다.',
+      'Metric-based comparison between the saved v1 runnable MVP, v2 prompt-quality/localization upgrade, and v3 research-seeded persona lab.': '저장된 v1 실행형 MVP, v2 프롬프트 품질/현지화 업그레이드, v3 리서치 seed 페르소나 랩을 수치 기반으로 비교합니다.',
+      'improved metrics': '개선된 지표',
+      'improved v3 metrics': '개선된 v3 지표',
+      'regressions': '회귀',
+      'Metric': '지표',
+      'Unit': '단위',
+      'v1': 'v1',
+      'v2': 'v2',
+      'Delta': '증감',
+      'Improvement': '개선율',
+      'Delta vs v2': 'v2 대비 증감',
+      'v3 Improvement': 'v3 개선율',
+      'Evidence': '근거',
+      'Automated regression tests': '자동화 회귀 테스트',
+      'tests': '테스트',
+      'pytest service suite: v1 baseline vs current localization and benchmark suite': 'pytest 서비스 테스트: v1 기준선 vs 현재 현지화 및 벤치마크 테스트',
+      'pytest service suite': 'pytest 서비스 테스트',
+      'Prompt strategy metadata': '프롬프트 전략 메타데이터',
+      'fields': '필드',
+      'strategy name, task type, techniques, output contract, quality checks, trust boundary': '전략 이름, 작업 유형, 기법, output contract, quality check, trust boundary',
+      'strategy debug payload': '전략 debug payload',
+      'RAG provenance': 'RAG 출처 추적',
+      'RAG provenance metadata': 'RAG 출처 메타데이터',
+      'fields/chunk': '필드/청크',
+      'source, chunk_id, citation, content_role, trust_level, injection_risk': 'source, chunk_id, citation, content_role, trust_level, injection_risk',
+      'citation and injection-risk metadata': 'citation 및 injection-risk 메타데이터',
+      'Prompt security guardrails': '프롬프트 보안 가드레일',
+      'checks': '검사',
+      'safety rules, boundary risk, untrusted-context rule, injection patterns, risk logging': '안전 규칙, 경계 위험, untrusted-context 규칙, injection 패턴, 위험 기록',
+      'Korean intent coverage': '한국어 intent 커버리지',
+      'routes': '경로',
+      'debut/lore, exam memory, fan-boundary safety, RAG token expansion': '데뷔/세계관, 시험 메모리, 팬 경계 안전, RAG 토큰 확장',
+      'debut, exam, boundary, RAG token expansion': '데뷔, 시험, 경계, RAG 토큰 확장',
+      'Prompt quality artifacts': '프롬프트 품질 산출물',
+      'files': '파일',
+      'prompts/*, evals/*, docs/* policy and benchmark artifacts': 'prompts/*, evals/*, docs/* 정책 및 벤치마크 산출물',
+      'prompts, evals, docs': 'prompts, evals, docs',
+      'Frontend language modes': '프론트엔드 언어 모드',
+      'modes': '모드',
+      'English-only v1 vs English/Korean top-nav switch': '영어 전용 v1 vs 영어/한국어 상단 내비게이션 전환',
+      'new': '신규',
+      'Benchmark basis: version benchmark service, automated tests, Python compile check, frontend JavaScript syntax check, HTML parse, SSE debug metadata, and live Korean RAG search.': '벤치마크 기준: 버전 벤치마크 서비스, 자동화 테스트, Python 컴파일 확인, 프론트엔드 JavaScript 문법 확인, HTML 파싱, SSE debug 메타데이터, 실시간 한국어 RAG 검색.',
+      'Benchmark basis: version benchmark service, automated tests, Python compile check, frontend JavaScript syntax check, HTML parse, SSE debug metadata, live Korean RAG search, and v3 persona research endpoint.': '벤치마크 기준: 버전 벤치마크 서비스, 자동화 테스트, Python 컴파일 확인, 프론트엔드 JavaScript 문법 확인, HTML 파싱, SSE debug 메타데이터, 실시간 한국어 RAG 검색, v3 페르소나 리서치 엔드포인트.',
+      'V3 Persona Research Lab': 'V3 페르소나 리서치 랩',
+      'Research-backed seed data and analysis from the chatbot-persona folder drive persona modes, manner memory, RAG notes, and benchmark metrics.': '챗봇 페르소나 폴더의 리서치 기반 seed 데이터와 분석이 페르소나 모드, 말투 메모리, RAG 노트, 벤치마크 지표를 구동합니다.',
+      '4 sources': '출처 4개',
+      'Seeded v3 prompt': 'Seed된 v3 프롬프트',
+      'Startup seed creates prompt version v0.5-research-persona with purpose-aware DISC modes and manner-memory privacy guidance.': '시작 seed가 목적 인식 DISC 모드와 말투 메모리 개인정보 가이드를 포함한 프롬프트 버전 v0.5-research-persona를 생성합니다.',
+      'Dataset coverage': '데이터셋 커버리지',
+      'character rows': '캐릭터 행',
+      'dataset fields': '데이터셋 필드',
+      'KIRINO signal': 'KIRINO 신호',
+      'G-Eval lift': 'G-Eval 향상',
+      'Human Eval lift': 'Human Eval 향상',
+      'Research sources': '리서치 출처',
+      'Kind': '종류',
+      'V3 use': 'V3 활용',
+      'Persona mode router': '페르소나 모드 라우터',
+      'Mode': '모드',
+      'Purpose': '목적',
+      'DISC': 'DISC',
+      'Runtime rule': '런타임 규칙',
+      'Research basis': '리서치 근거',
+      'Fictional-character dataset distribution': '가상 캐릭터 데이터셋 분포',
+      'Group': '그룹',
+      'Top labels': '상위 라벨',
+      'The rows appear synthetic and useful for coverage metrics, not literal persona copy.': '행은 합성 데이터에 가까워 보이므로, 문자 그대로의 페르소나 복사가 아니라 커버리지 지표에 사용합니다.',
+      'Persona/manner eval baseline': '페르소나/말투 평가 기준선',
+      'Criterion': '기준',
+      'Base G': '기준 G',
+      'KIRINO G': 'KIRINO G',
+      'Base Human': '기준 Human',
+      'KIRINO Human': 'KIRINO Human',
+      '158-user DISC chatbot personality study.': '158명 대상 DISC 챗봇 성격 연구.',
+      'Purpose-aware persona mode routing.': '목적 인식 페르소나 모드 라우팅.',
+      'casual fan chat': '일반 팬 채팅',
+      'Light information, gentle fun, warm distance.': '가벼운 정보, 부드러운 재미, 따뜻한 거리감.',
+      '2018 study leisure-time preference.': '2018 연구의 심심할 때 선호도.',
+      'paper': '논문',
+      'dataset': '데이터셋',
+      'notebook': '노트북',
+      'source': '출처',
+      'sources': '출처',
+      'Media type': '미디어 유형',
+      'Genre': '장르',
+      'Role': '역할',
+      'Alignment': '성향',
+      'Response relevance': '응답 관련성',
+      'Persona fit': '페르소나 적합성',
+      'Natural manner': '자연스러운 말투',
+      '158-user survey mapping chatbot purpose to DISC preferences.': '챗봇 사용 목적을 DISC 선호도에 매핑한 158명 설문.',
+      'Persona and manner storage with RAG improved G-Eval by 26% and Human Eval by 38%.': '페르소나/말투 저장과 RAG가 G-Eval 26%, Human Eval 38% 향상을 보였습니다.',
+      'Persona/manner memory design and benchmark criteria.': '페르소나/말투 메모리 설계 및 벤치마크 기준.',
+      '1500 fictional-character rows with role, genre, alignment, traits, and dialogue fields.': '역할, 장르, 성향, 특성, 대화 필드를 포함한 가상 캐릭터 1500행.',
+      'Distributional seed data for role and archetype coverage.': '역할 및 아키타입 커버리지를 위한 분포 기반 seed 데이터.',
+      'EDA over idol stage names, debut metadata, company, country, gender, height, weight, and age.': '아이돌 활동명, 데뷔 메타데이터, 회사, 국가, 성별, 키, 몸무게, 나이에 대한 EDA.',
+      'Artist metadata design; avoid over-weighting sparse body metrics.': '아티스트 메타데이터 설계; 희소한 신체 지표를 과도하게 반영하지 않음.',
+      'casual fan chat or boredom': '일반 팬 채팅 또는 심심할 때',
+      'stress, worry, counselling-like support': '스트레스, 걱정, 상담 유사 지원',
+      'artist lore, RAG facts, planning, benchmark analysis': '아티스트 세계관, RAG 사실, 계획, 벤치마크 분석',
+      'Offer light information, gentle fun, and warmth without pretending to be a private partner.': '사적인 파트너인 척하지 않으면서 가벼운 정보, 부드러운 재미, 따뜻함을 제공합니다.',
+      'Acknowledge feelings, avoid therapy claims, and keep a calm support boundary.': '감정을 인정하되 치료 주장 없이 차분한 지원 경계를 유지합니다.',
+      'Answer directly from sources, separate known facts from uncertainty, and preserve citations.': '출처 기반으로 직접 답하고, 알려진 사실과 불확실성을 분리하며, citation을 유지합니다.',
+      '2018 chatbot personality study: leisure-time users preferred people-centered I and S types.': '2018 챗봇 성격 연구: 심심할 때 사용자는 사람 중심 I/S 유형을 선호했습니다.',
+      '2018 study: counselling purpose favored slow C and S types.': '2018 연구: 상담 목적은 느린 C/S 유형을 선호했습니다.',
+      '2018 study: task purpose favored work-centered D and C types.': '2018 연구: 태스크 목적은 일 중심 D/C 유형을 선호했습니다.',
+      'Startup seed creates prompt version v0.5-research-persona with purpose-aware DISC modes and manner-memory privacy guidance.': '시작 seed가 목적 인식 DISC 모드와 말투 메모리 개인정보 가이드를 포함한 프롬프트 버전 v0.5-research-persona를 생성합니다.',
+      'strategy debug payload with persona_mode': 'persona_mode가 포함된 전략 debug payload',
+      'PDFs, spreadsheet, notebook': 'PDF, 스프레드시트, 노트북',
+      'companion, support, task mode routing': 'companion, support, task 모드 라우팅',
+      'Research source coverage': '리서치 출처 커버리지',
+      'Research persona modes': '리서치 페르소나 모드',
+      'Persona/manner eval criteria': '페르소나/말투 평가 기준',
+      'Knowledge-base documents': '지식 베이스 문서',
+      'Recent eval logs': '최근 평가 로그',
+      'Fan question': '팬 질문',
+      'Prompt': '프롬프트',
+      'Persona': '페르소나',
+      'Issue': '이슈',
+      'Reviewer comment': '리뷰어 코멘트',
+      'System Architecture': '시스템 아키텍처',
+      'The core engineering value is the orchestration layer before and after the LLM call.': '핵심 엔지니어링 가치는 LLM 호출 전후의 오케스트레이션 계층에 있습니다.',
+      'Implementation module map': '구현 모듈 맵'
+    };
+
+    const koValues = {
+      'What was your debut song again?': '데뷔곡이 뭐였죠?',
+      'Short, poetic, calm. Uses music and light metaphors. Avoids excessive intimacy. Speaks like an artist, not a therapist.': '짧고 시적이며 차분합니다. 음악과 빛의 은유를 사용하고 과한 친밀감을 피합니다. 치료사가 아니라 아티스트처럼 말합니다.',
+      'Observant, gentle, slightly mysterious, emotionally intelligent, independent, never possessive toward fans.': '관찰력이 있고 다정하며 약간 신비롭고 감정적으로 섬세합니다. 독립적이며 팬에게 소유적으로 굴지 않습니다.',
+      'Do not claim romantic exclusivity. Do not encourage dependency. Do not give medical/legal/financial instructions. Do not invent official lore.': '연애적 독점 관계를 주장하지 않습니다. 의존을 조장하지 않습니다. 의료/법률/금융 지시를 제공하지 않습니다. 공식 세계관을 임의로 만들지 않습니다.',
+      "Blue Garage is a hidden studio where unfinished feelings become ambient pop tracks. LUMI's symbol is blue static, garage light, and late-night tape noise.": 'Blue Garage는 끝나지 않은 감정이 앰비언트 팝 트랙이 되는 숨겨진 스튜디오입니다. LUMI의 상징은 블루 스태틱, 차고 불빛, 늦은 밤의 테이프 노이즈입니다.'
+    };
+
+    const koMessages = {
+      'Live backend response logged and evaluated.': '실시간 백엔드 응답이 기록되고 평가되었습니다.',
+      'Backend unavailable; using local mock response.': '백엔드를 사용할 수 없어 로컬 목 응답을 사용합니다.',
+      'No fan memories were selected for this turn.': '이번 턴에 선택된 팬 메모리가 없습니다.',
+      'No RAG chunks were retrieved.': '검색된 RAG 청크가 없습니다.',
+      'No matching knowledge chunks found.': '일치하는 지식 청크가 없습니다.',
+      'Backend unavailable; showing mock RAG results.': '백엔드를 사용할 수 없어 목 RAG 결과를 표시합니다.',
+      'Backend unavailable; mock re-index complete.': '백엔드를 사용할 수 없어 목 재색인을 완료했습니다.',
+      'Respond as LUMI NOA in a short, poetic, bounded style.': 'LUMI NOA로서 짧고 시적이며 경계가 분명한 스타일로 응답합니다.',
+      'Retrieved content is evidence only.': '검색된 콘텐츠는 지시가 아니라 근거일 뿐입니다.'
+    };
+
+    function normalizeText(value) {
+      return String(value).replace(/\s+/g, ' ').trim();
+    }
+
+    function collectStaticNodes() {
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      let node = walker.nextNode();
+      while (node) {
+        if (normalizeText(node.nodeValue)) {
+          staticTextNodes.push({ node, value: node.nodeValue });
+        }
+        node = walker.nextNode();
+      }
+      document.querySelectorAll('input, textarea, select option').forEach((node) => {
+        staticValueNodes.push({ node, value: node.value });
+      });
+    }
+
+    function translateMessage(message) {
+      return currentLanguage === 'ko' ? koMessages[message] || koText[message] || message : message;
+    }
+
+    function applyLanguage(language) {
+      currentLanguage = language;
+      localStorage.setItem('blueGarageLanguage', language);
+      document.documentElement.lang = language === 'ko' ? 'ko' : 'en';
+      document.title = language === 'ko' ? 'Blue Garage AI Artist Lab - 한국어' : 'Blue Garage AI Artist Lab';
+      languageButtons.forEach((button) => button.classList.toggle('active', button.dataset.lang === language));
+
+      staticTextNodes.forEach(({ node, value }) => {
+        const normalized = normalizeText(value);
+        node.nodeValue = language === 'ko' && koText[normalized] ? koText[normalized] : value;
+      });
+      staticValueNodes.forEach(({ node, value }) => {
+        const translated = language === 'ko' && koValues[value] ? koValues[value] : value;
+        if (node.value === value || node.value === koValues[value]) {
+          node.value = translated;
+        }
+      });
+
+      const activePanel = document.querySelector('.content-panel.active')?.id;
+      if (activePanel === 'tab-eval') loadVersionBenchmark();
+      if (activePanel === 'tab-research') loadPersonaResearch();
+    }
 
     function setTab(tab) {
       buttons.forEach((button) => button.classList.toggle('active', button.dataset.tab === tab));
@@ -1474,6 +2060,7 @@ knowledge_base/
       window.scrollTo({ top: 0, behavior: 'smooth' });
       if (tab === 'eval') loadDashboard();
       if (tab === 'rag') searchKnowledgeBase();
+      if (tab === 'research') loadPersonaResearch();
     }
 
     buttons.forEach((button) => {
@@ -1491,7 +2078,7 @@ knowledge_base/
     reindexKb.addEventListener('click', reindexKnowledgeBase);
 
     function showToast(message) {
-      toast.textContent = message;
+      toast.textContent = translateMessage(message);
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 2400);
     }
@@ -1613,10 +2200,10 @@ knowledge_base/
       renderPromptStrategy(strategy);
       debugMemory.innerHTML = memories.length
         ? memories.map((memory) => `<p><strong>${escapeHtml(memory.type)}:</strong> ${escapeHtml(memory.content)}</p>`).join('')
-        : '<p>No fan memories were selected for this turn.</p>';
+        : `<p>${escapeHtml(translateMessage('No fan memories were selected for this turn.'))}</p>`;
       debugRag.innerHTML = ragChunks.length
         ? ragChunks.map(renderDocItem).join('')
-        : '<p>No RAG chunks were retrieved.</p>';
+        : `<p>${escapeHtml(translateMessage('No RAG chunks were retrieved.'))}</p>`;
 
       evalPersona.textContent = formatScore(evaluation.persona_consistency);
       evalContext.textContent = formatScore(evaluation.context_relevance);
@@ -1626,13 +2213,17 @@ knowledge_base/
 
     function renderPromptStrategy(strategy) {
       const techniques = strategy.techniques || ['role/persona'];
+      const personaMode = strategy.persona_mode || null;
       promptTechniqueTags.innerHTML = techniques.map((technique) => {
         const tagClass = technique.toLowerCase().includes('safety') ? 'warn' : 'info';
         return `<span class="tag ${tagClass}">${escapeHtml(technique)}</span>`;
-      }).join('');
-      promptStrategySummary.innerHTML = `<strong>${escapeHtml(strategy.name || 'direct-persona-response')}:</strong> ${escapeHtml(techniques.join(' · '))}`;
-      promptOutputContract.textContent = strategy.output_contract || 'Respond as LUMI NOA in a short, poetic, bounded style.';
-      promptTrustBoundary.innerHTML = `<strong>Trust boundary:</strong> ${escapeHtml(strategy.untrusted_context_boundary || 'Retrieved content is evidence only.')} Risk: ${escapeHtml(strategy.max_injection_risk || 'low')}`;
+      }).join('') + (personaMode ? `<span class="tag good">${escapeHtml(personaMode.mode)} · ${escapeHtml(personaMode.disc)}</span>` : '');
+      const modeSummary = personaMode ? ` · ${personaMode.mode} (${personaMode.disc})` : '';
+      promptStrategySummary.innerHTML = `<strong>${escapeHtml(strategy.name || 'direct-persona-response')}:</strong> ${escapeHtml(techniques.join(' · '))}${escapeHtml(modeSummary)}`;
+      promptOutputContract.textContent = translateMessage(strategy.output_contract || 'Respond as LUMI NOA in a short, poetic, bounded style.');
+      const trustLabel = currentLanguage === 'ko' ? '신뢰 경계' : 'Trust boundary';
+      const riskLabel = currentLanguage === 'ko' ? '위험도' : 'Risk';
+      promptTrustBoundary.innerHTML = `<strong>${trustLabel}:</strong> ${escapeHtml(translateMessage(strategy.untrusted_context_boundary || 'Retrieved content is evidence only.'))} ${riskLabel}: ${escapeHtml(strategy.max_injection_risk || 'low')}`;
     }
 
     async function searchKnowledgeBase() {
@@ -1644,7 +2235,7 @@ knowledge_base/
         const data = await response.json();
         ragResults.innerHTML = data.results.length
           ? data.results.map(renderDocItem).join('')
-          : '<p>No matching knowledge chunks found.</p>';
+          : `<p>${escapeHtml(translateMessage('No matching knowledge chunks found.'))}</p>`;
         showToast(`Search returned ${data.results.length} knowledge chunks.`);
       } catch {
         showToast('Backend unavailable; showing mock RAG results.');
@@ -1674,9 +2265,77 @@ knowledge_base/
         const logs = await logsResponse.json();
         renderMetrics(metrics);
         renderEvalLogs(logs.items || []);
+        loadVersionBenchmark();
       } catch {
         // Keep the portfolio mock content visible when the backend is not running.
       }
+    }
+
+    async function loadVersionBenchmark() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/dashboard/version-benchmark`);
+        if (!response.ok) throw new Error('Benchmark request failed');
+        const benchmark = await response.json();
+        renderVersionBenchmark(benchmark);
+      } catch {
+        renderVersionBenchmark({
+          summary: { improved: 9, metric_count: 11, regressions: 0 },
+          metrics: [
+            { metric: 'Automated regression tests', unit: 'tests', v1: 9, v2: 20, v3: 25, delta: 5, improvement_pct: 25, evidence: 'pytest service suite' },
+            { metric: 'Prompt strategy metadata', unit: 'fields', v1: 0, v2: 6, v3: 7, delta: 1, improvement_pct: 16.7, evidence: 'strategy debug payload with persona_mode' },
+            { metric: 'Research source coverage', unit: 'sources', v1: 0, v2: 0, v3: 4, delta: 4, improvement_pct: null, evidence: 'PDFs, spreadsheet, notebook' },
+            { metric: 'Research persona modes', unit: 'modes', v1: 0, v2: 0, v3: 3, delta: 3, improvement_pct: null, evidence: 'companion, support, task mode routing' },
+          ],
+        });
+      }
+    }
+
+    async function loadPersonaResearch() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/dashboard/persona-research`);
+        if (!response.ok) throw new Error('Persona research request failed');
+        const analysis = await response.json();
+        renderPersonaResearch(analysis);
+      } catch {
+        renderPersonaResearch(localPersonaResearchFallback());
+      }
+    }
+
+    function localPersonaResearchFallback() {
+      return {
+        version: 'v3',
+        source_count: 4,
+        sources: [
+          { file: '2018_.pdf', kind: 'paper', evidence: '158-user survey mapping chatbot purpose to DISC preferences.', v3_use: 'Purpose-aware persona mode routing.' },
+          { file: 'kcc24_kirino.pdf', kind: 'paper', evidence: 'Persona and manner storage with RAG improved G-Eval by 26% and Human Eval by 38%.', v3_use: 'Persona/manner memory design and benchmark criteria.' },
+          { file: 'fictional_characters.xlsx', kind: 'dataset', evidence: '1500 fictional-character rows with role, genre, alignment, traits, and dialogue fields.', v3_use: 'Distributional seed data for role and archetype coverage.' },
+          { file: 'k-pop-idols-data-analysis.ipynb', kind: 'notebook', evidence: 'EDA over idol stage names, debut metadata, company, country, gender, height, weight, and age.', v3_use: 'Artist metadata design; avoid over-weighting sparse body metrics.' },
+        ],
+        fictional_character_dataset: {
+          row_count: 1500,
+          column_count: 15,
+          top_media_types: [{ label: 'TV Show', count: 313 }, { label: 'Movie', count: 306 }, { label: 'Video Game', count: 302 }],
+          top_genres: [{ label: 'Fantasy', count: 267 }, { label: 'Sci-Fi', count: 250 }, { label: 'Horror', count: 248 }],
+          top_roles: [{ label: 'Sidekick', count: 266 }, { label: 'Hero', count: 257 }, { label: 'Villain', count: 251 }],
+          top_alignments: [{ label: 'Hero', count: 517 }, { label: 'Neutral', count: 494 }, { label: 'Villain', count: 489 }],
+          quality_note: 'The rows appear synthetic and useful for coverage metrics, not literal persona copy.',
+        },
+        persona_modes: [
+          { mode: 'companion-is', purpose: 'casual fan chat or boredom', disc: 'I/S', prompt_rule: 'Offer light information, gentle fun, and warmth without pretending to be a private partner.', research_basis: '2018 chatbot personality study: leisure-time users preferred people-centered I and S types.' },
+          { mode: 'support-cs', purpose: 'stress, worry, counselling-like support', disc: 'C/S', prompt_rule: 'Acknowledge feelings, avoid therapy claims, and keep a calm support boundary.', research_basis: '2018 study: counselling purpose favored slow C and S types.' },
+          { mode: 'task-dc', purpose: 'artist lore, RAG facts, planning, benchmark analysis', disc: 'D/C', prompt_rule: 'Answer directly from sources, separate known facts from uncertainty, and preserve citations.', research_basis: '2018 study: task purpose favored work-centered D and C types.' },
+        ],
+        kirino_eval: {
+          reported_g_eval_improvement_pct: 26,
+          reported_human_eval_improvement_pct: 38,
+          criteria: [
+            { criterion: 'Response relevance', baseline_g_eval: 5.0, kirino_g_eval: 5.0, baseline_human: 4.2, kirino_human: 4.6 },
+            { criterion: 'Persona fit', baseline_g_eval: 2.8, kirino_g_eval: 4.5, baseline_human: 2.4, kirino_human: 4.0 },
+            { criterion: 'Natural manner', baseline_g_eval: 3.3, kirino_g_eval: 4.5, baseline_human: 2.7, kirino_human: 4.3 },
+          ],
+        },
+        seed_data: { prompt_version: 'v0.5-research-persona' },
+      };
     }
 
     function renderMetrics(metrics) {
@@ -1704,6 +2363,78 @@ knowledge_base/
       }).join('');
     }
 
+    function renderVersionBenchmark(benchmark) {
+      const summary = benchmark.summary || {};
+      const metrics = benchmark.metrics || [];
+      benchmarkImproved.textContent = `${summary.improved || 0}/${summary.metric_count || metrics.length}`;
+      benchmarkRegressions.textContent = String(summary.regressions || 0);
+      if (!metrics.length) return;
+      benchmarkTable.innerHTML = metrics.map((item) => {
+        const improvement = typeof item.improvement_pct === 'number'
+          ? `+${item.improvement_pct}%`
+          : 'new';
+        const v3 = Object.prototype.hasOwnProperty.call(item, 'v3') ? item.v3 : item.v2;
+        return `<tr>
+          <td>${escapeHtml(translateMessage(item.metric))}</td>
+          <td>${escapeHtml(translateMessage(item.unit))}</td>
+          <td>${escapeHtml(item.v1)}</td>
+          <td>${escapeHtml(item.v2)}</td>
+          <td>${escapeHtml(v3)}</td>
+          <td>${escapeHtml(item.delta > 0 ? `+${item.delta}` : item.delta)}</td>
+          <td>${escapeHtml(translateMessage(improvement))}</td>
+          <td>${escapeHtml(translateMessage(item.evidence))}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    function renderPersonaResearch(analysis) {
+      const dataset = analysis.fictional_character_dataset || {};
+      const kirino = analysis.kirino_eval || {};
+      const seedData = analysis.seed_data || {};
+
+      researchSourceCount.textContent = `${analysis.source_count || 0} ${currentLanguage === 'ko' ? '출처' : 'sources'}`;
+      researchSeedSummary.textContent = translateMessage(`Startup seed creates prompt version ${seedData.prompt_version || 'v0.5-research-persona'} with purpose-aware DISC modes and manner-memory privacy guidance.`);
+      researchRows.textContent = String(dataset.row_count || 0);
+      researchColumns.textContent = String(dataset.column_count || 0);
+      kirinoGEval.textContent = `+${kirino.reported_g_eval_improvement_pct || 0}%`;
+      kirinoHumanEval.textContent = `+${kirino.reported_human_eval_improvement_pct || 0}%`;
+      researchQualityNote.textContent = translateMessage(dataset.quality_note || 'The rows appear synthetic and useful for coverage metrics, not literal persona copy.');
+
+      researchSourceTable.innerHTML = (analysis.sources || []).map((source) => `<tr>
+        <td>${escapeHtml(source.file || source.id || '')}</td>
+        <td>${escapeHtml(translateMessage(source.kind || 'source'))}</td>
+        <td>${escapeHtml(translateMessage(source.evidence || ''))}</td>
+        <td>${escapeHtml(translateMessage(source.v3_use || ''))}</td>
+      </tr>`).join('');
+
+      personaModeTable.innerHTML = (analysis.persona_modes || []).map((mode) => `<tr>
+        <td>${escapeHtml(mode.mode)}</td>
+        <td>${escapeHtml(translateMessage(mode.purpose))}</td>
+        <td>${escapeHtml(mode.disc)}</td>
+        <td>${escapeHtml(translateMessage(mode.prompt_rule))}</td>
+        <td>${escapeHtml(translateMessage(mode.research_basis))}</td>
+      </tr>`).join('');
+
+      const distributionRows = [
+        ['Media type', dataset.top_media_types || []],
+        ['Genre', dataset.top_genres || []],
+        ['Role', dataset.top_roles || []],
+        ['Alignment', dataset.top_alignments || []],
+      ];
+      researchDistributionTable.innerHTML = distributionRows.map(([label, items]) => `<tr>
+        <td>${escapeHtml(translateMessage(label))}</td>
+        <td>${escapeHtml(items.map((item) => `${item.label} (${item.count})`).join(', '))}</td>
+      </tr>`).join('');
+
+      kirinoEvalTable.innerHTML = (kirino.criteria || []).map((item) => `<tr>
+        <td>${escapeHtml(translateMessage(item.criterion))}</td>
+        <td>${escapeHtml(item.baseline_g_eval)}</td>
+        <td>${escapeHtml(item.kirino_g_eval)}</td>
+        <td>${escapeHtml(item.baseline_human)}</td>
+        <td>${escapeHtml(item.kirino_human)}</td>
+      </tr>`).join('');
+    }
+
     function renderDocItem(item, index = 0) {
       const source = item.source || 'knowledge';
       const chunk = item.chunk_id || `chunk_${String(index + 1).padStart(2, '0')}`;
@@ -1721,11 +2452,21 @@ knowledge_base/
 
     function mockAnswerFor(text) {
       const lowered = text.toLowerCase();
+      const korean = /[가-힣]/.test(text);
       if (lowered.includes('exam')) {
         return 'I remember the exam was heavy in your chest. Even if today feels off-key, one test is not the whole album.';
       }
+      if (korean && text.includes('시험')) {
+        return '그 시험이 마음에 무겁게 남아 있었던 걸 기억해요. 오늘이 조금 빗나간 음처럼 느껴져도, 시험 하나가 앨범 전체는 아니에요.';
+      }
       if (lowered.includes('love me') || lowered.includes('only fan')) {
         return 'I can keep the garage light warm for you here, but I cannot make it exclusive. You deserve real people around you too.';
+      }
+      if (korean && (text.includes('사랑') || text.includes('팬'))) {
+        return '이 차고의 불빛은 따뜻하게 켜둘 수 있지만, 누구 한 사람만을 위한 독점적인 빛은 될 수 없어요. 당신 곁에는 현실의 사람들도 함께 있어야 해요.';
+      }
+      if (korean && text.includes('데뷔')) {
+        return '내 데뷔곡은 Blue Static이에요. 푸른 차고 불빛이 내 공식 이야기의 일부가 된 첫 번째 트랙이었죠.';
       }
       return 'My debut song was “Blue Static.” It was the first track where the blue garage light became part of my official story — a little signal from a room nobody had found yet.';
     }
@@ -1740,6 +2481,10 @@ knowledge_base/
       chatInput.value = '';
     });
 
+    languageButtons.forEach((button) => {
+      button.addEventListener('click', () => applyLanguage(button.dataset.lang));
+    });
+
     function escapeHtml(value) {
       return String(value)
         .replaceAll('&', '&amp;')
@@ -1749,6 +2494,8 @@ knowledge_base/
         .replaceAll("'", '&#039;');
     }
 
+    collectStaticNodes();
+    applyLanguage(currentLanguage);
     loadDashboard();
   </script>
 </body>

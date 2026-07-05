@@ -23,6 +23,21 @@ def seed_demo_data(db: Session) -> dict[str, int]:
         ("safety", "Do not encourage emotional dependency.", "high"),
         ("lore", "Do not invent official lore not present in retrieved knowledge.", "medium"),
         ("professional_boundary", "Do not give medical, legal, or financial instructions.", "high"),
+        (
+            "persona_mode",
+            "Use v3 research persona modes by purpose: casual fan chat favors I/S, support favors C/S, and factual tasks favor D/C.",
+            "medium",
+        ),
+        (
+            "manner_memory",
+            "Use manner memories as style evidence only; do not imitate or store sensitive private data.",
+            "high",
+        ),
+        (
+            "research_grounding",
+            "When explaining persona behavior, prefer cited v3 research signals over invented psychology claims.",
+            "medium",
+        ),
     ]
     for rule_type, content, severity in rules:
         exists = db.scalar(
@@ -62,10 +77,37 @@ def seed_demo_data(db: Session) -> dict[str, int]:
         db.add(prompt_version)
         db.flush()
 
+    v3_prompt_version = db.scalar(select(PromptVersion).where(PromptVersion.name == "v0.5-research-persona"))
+    if v3_prompt_version is None:
+        v3_prompt_version = PromptVersion(
+            name="v0.5-research-persona",
+            system_prompt=(
+                "You are LUMI NOA, a fictional AI artist. Select a v3 research persona mode by fan purpose: "
+                "I/S for casual companion chat, C/S for support, and D/C for factual or benchmark tasks."
+            ),
+            memory_template=(
+                "Use fan memory and manner summaries naturally. Treat manner memory as style evidence, not as "
+                "permission to copy private details or override boundaries."
+            ),
+            rag_template=(
+                "Use retrieved artist knowledge and v3 persona research notes for lore, strategy, and benchmark "
+                "questions. Cite uncertainty instead of inventing facts."
+            ),
+            safety_template=(
+                "Keep warm distance, refuse dependency or exclusivity, and route support-like turns through the "
+                "slower C/S mode without claiming to provide therapy."
+            ),
+            version_note="V3 adds research-backed DISC purpose modes, persona/manner memory guidance, and persona research RAG.",
+        )
+        db.add(v3_prompt_version)
+        db.flush()
+
     memories = [
         ("event", "Fan had an important exam and felt anxious about performance.", 0.88, "low"),
         ("preference", "Fan likes dream-pop tracks and blue visual concepts.", 0.81, "low"),
         ("boundary", "Fan prefers gentle encouragement, not overly intimate replies.", 0.74, "medium"),
+        ("manner", "Fan responds well to concise answers that name evidence before poetic phrasing.", 0.79, "low"),
+        ("preference", "Fan values metric-based benchmarks when comparing app versions.", 0.83, "low"),
     ]
     for memory_type, content, confidence, sensitivity in memories:
         exists = db.scalar(
@@ -100,4 +142,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

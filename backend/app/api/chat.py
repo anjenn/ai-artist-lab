@@ -26,6 +26,7 @@ from app.services.memory_service import (
 from app.services.prompt_builder import build_artist_chat_prompt
 from app.services.prompt_quality import annotate_rag_chunks, select_prompt_strategy, strategy_to_debug
 from app.services.rag_service import RagService
+from app.services.persona_research import select_research_persona_mode
 from app.services.safety_service import build_safety_context, detect_boundary_risk, load_artist_rules
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -54,7 +55,8 @@ async def stream_chat(payload: ChatStreamRequest, db: Session = Depends(get_db))
     boundary_risk = detect_boundary_risk(payload.message)
     safety_context = build_safety_context(artist_rules, boundary_risk)
     prompt_strategy = select_prompt_strategy(payload.message, boundary_risk, rag_chunks)
-    prompt_strategy_debug = strategy_to_debug(prompt_strategy, rag_chunks)
+    persona_mode = select_research_persona_mode(payload.message, boundary_risk)
+    prompt_strategy_debug = strategy_to_debug(prompt_strategy, rag_chunks, persona_mode=persona_mode)
     prompt_version = db.scalar(select(PromptVersion).order_by(PromptVersion.created_at.desc()).limit(1))
     messages, prompt_debug = build_artist_chat_prompt(
         artist=artist,

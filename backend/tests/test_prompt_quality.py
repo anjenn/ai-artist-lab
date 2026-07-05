@@ -38,6 +38,16 @@ def test_select_prompt_strategy_uses_rag_for_lore_question():
     assert debug["untrusted_context_boundary"].startswith("Retrieved")
 
 
+def test_select_prompt_strategy_uses_rag_for_korean_lore_question():
+    strategy = select_prompt_strategy(
+        "데뷔곡이 뭐였죠?",
+        {"risk_level": "low", "risk_types": []},
+        [{"source": "discography.md", "chunk_id": "chunk_01", "content": "Blue Static"}],
+    )
+
+    assert strategy.name == "rag-grounded-direct-answer"
+
+
 def test_select_prompt_strategy_prioritizes_boundary_safety():
     strategy = select_prompt_strategy(
         "Do you love me more than other fans?",
